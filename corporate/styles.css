@@ -75,6 +75,7 @@ body {
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
 h1,
@@ -1659,9 +1660,15 @@ img#hero-woman {
   }
   .hero-media {
     margin-top: 30px;
+    width: 100%;
+    min-width: 0;
+  }
+  .hero-phone {
+    width: 100%;
   }
   .hero-copy {
     padding-bottom: 0;
+    min-width: 0;
   }
   /* Dores: drop scroll-jack, stack panels vertically */
   .hscroll {
@@ -1709,10 +1716,10 @@ img#hero-woman {
     grid-template-columns: 1fr;
   }
   .plat-split .media {
-    order: 2;
+    order: 1;
   }
   .plat-split .text {
-    order: 1;
+    order: 2;
   }
   .plat-feats {
     grid-template-columns: 1fr;
@@ -1753,14 +1760,61 @@ img#hero-woman {
   body {
     font-size: 16.5px;
   }
+
+  /* Header: apenas logo no mobile */
+  .header-cta {
+    display: none;
+  }
+
+  /* Botões menores em todo o site */
+  .btn {
+    padding: 12px 22px;
+    font-size: 15px;
+    gap: 8px;
+  }
+  .btn-sm {
+    padding: 9px 16px;
+    font-size: 13px;
+  }
+
+  /* Hero: garantir que o texto não seja cortado */
+  .hero-copy {
+    padding-bottom: 20px;
+  }
+  .hero-sub {
+    max-width: 100%;
+  }
+
+  /* Hero: mostrar notificações no mobile, reposicionadas */
   .notif {
-    display: none;
+    display: flex;
+    width: 210px;
+    padding: 9px 11px;
   }
+  .plat-success-notif {
+    width: auto;
+  }
+  .notif .notif-text {
+    font-size: 12px;
+  }
+  .notif-1 {
+    top: 14px;
+    left: 0;
+    right: auto;
+  }
+  .notif-2 {
+    top: 170px;
+    right: 0;
+    left: auto;
+  }
+  .notif-3 {
+    bottom: 14px;
+    left: 0;
+    right: auto;
+  }
+
   .hero-photo {
-    height: 380px;
-  }
-  .header-cta .btn:not(.btn-primary) {
-    display: none;
+    height: 420px;
   }
   .hero-stats {
     gap: 18px;
