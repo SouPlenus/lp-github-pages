@@ -291,6 +291,13 @@
         plano: document.getElementById("plano").value,
       }
 
+      var msg = encodeURIComponent(
+        "Olá, me chamo " +
+          payload.nome +
+          " e quero saber mais informações sobre a SouPlenus Corporate.",
+      )
+      window.open("https://wa.me/5553991818805?text=" + msg, "_blank")
+
       fetch(SHEETS_URL, {
         method: "POST",
         body: JSON.stringify(payload),
@@ -305,13 +312,6 @@
           if (typeof gtag === "function") {
             gtag("event", "conversion", { send_to: "AW-10777868214/_RsaCKnljLgcELbvpJMo" })
           }
-
-          var msg = encodeURIComponent(
-            "Olá, me chamo " +
-              payload.nome +
-              " e quero saber mais informações sobre a SouPlenus Corporate.",
-          )
-          window.open("https://wa.me/5553991818805?text=" + msg, "_blank")
         })
     })
   }
