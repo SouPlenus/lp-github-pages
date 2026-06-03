@@ -296,7 +296,11 @@
           payload.nome +
           " e quero saber mais informações sobre a SouPlenus Corporate.",
       )
-      window.open("https://wa.me/5553991818805?text=" + msg, "_blank")
+      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        window.location.href = "https://wa.me/5553991818805?text=" + msg
+      } else {
+        window.open("https://wa.me/5553991818805?text=" + msg, "_blank")
+      }
 
       fetch(SHEETS_URL, {
         method: "POST",
@@ -306,6 +310,7 @@
           // silently ignore network errors — lead already captured server-side
         })
         .finally(function () {
+          form.reset()
           form.style.display = "none"
           success.classList.add("show")
 
