@@ -260,6 +260,9 @@
         })
       })
 
+    var SHEETS_URL =
+      "https://script.google.com/macros/s/AKfycbz0G94vFRZY6QTEdB5HyUJv5TAQcpeCLI5f1-KHHRl_yKD0gj_8Y84tfuzrJiQuYMEt0Q/exec"
+
     form.addEventListener("submit", function (e) {
       e.preventDefault()
       var fields = form.querySelectorAll(".field")
@@ -274,8 +277,38 @@
         if (firstError) firstError.focus()
         return
       }
-      form.style.display = "none"
-      success.classList.add("show")
+
+      var submitBtn = form.querySelector("[type=submit]")
+      submitBtn.disabled = true
+      submitBtn.textContent = "Enviando…"
+
+      var payload = {
+        nome: document.getElementById("nome").value.trim(),
+        whatsapp: document.getElementById("whatsapp").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        empresa: document.getElementById("empresa").value.trim(),
+        colaboradores: document.getElementById("colaboradores").value,
+        plano: document.getElementById("plano").value,
+      }
+
+      fetch(SHEETS_URL, {
+        method: "POST",
+        body: JSON.stringify(payload),
+      })
+        .catch(function () {
+          // silently ignore network errors — lead already captured server-side
+        })
+        .finally(function () {
+          form.style.display = "none"
+          success.classList.add("show")
+
+          var msg = encodeURIComponent(
+            "Olá, me chamo " +
+              payload.nome +
+              " e quero saber mais informações sobre a SouPlenus Corporate.",
+          )
+          window.open("https://wa.me/5553991818805?text=" + msg, "_blank")
+        })
     })
   }
 })()
