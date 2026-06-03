@@ -302,6 +302,10 @@
           form.style.display = "none"
           success.classList.add("show")
 
+          if (typeof gtag === "function") {
+            gtag("event", "conversion", { send_to: "AW-10777868214/_RsaCKnljLgcELbvpJMo" })
+          }
+
           var msg = encodeURIComponent(
             "Olá, me chamo " +
               payload.nome +
