@@ -104,59 +104,59 @@
   var faqs = [
     {
       q: "Minha empresa é pequena, funciona para mim também?",
-      a: "Sim. Atendemos empresas a partir de 3 colaboradores. Nosso objetivo é tornar o acesso à saúde mais acessível para pequenas e médias empresas que não conseguem arcar com os planos de saúde tradicionais.",
+      a: "Sim. Atendemos empresas <b>a partir de 3 colaboradores</b>. Nosso objetivo é tornar o acesso à saúde mais acessível para pequenas e médias empresas que não conseguem arcar com os planos de saúde tradicionais.",
     },
     {
       q: "Já tenho um plano de saúde. Por que contratar a SouPlenus?",
-      a: "A maioria dos planos de saúde não cobre psicologia de forma ampla — e quando cobre, tem carência, lista de espera e rede limitada. Nossa plataforma oferece acesso imediato a psicólogos e outros profissionais da saúde, com agendamento direto pela plataforma.",
+      a: "A maioria dos planos de saúde <b>não cobre psicologia de forma ampla</b> — e quando cobre, tem carência, lista de espera e rede limitada. Nossa plataforma oferece <b>acesso imediato</b> a psicólogos e outros profissionais da saúde, com <b>agendamento direto pela plataforma</b>.",
     },
     {
       q: "Quanto custa para a empresa?",
-      a: "O número de colaboradores incluídos no benefício determina a faixa de investimento que a empresa fará mensalmente. Preencha o formulário e solicite sua cotação gratuita.",
+      a: "O número de colaboradores incluídos no benefício determina a faixa de investimento que a empresa fará mensalmente. Preencha o formulário e <b>solicite sua cotação gratuita</b>.",
     },
     {
       q: "Quanto custa para o colaborador?",
-      a: "O colaborador paga um valor fixo reduzido em consultas com psicólogos e nutricionistas. Além disso, oferecemos descontos exclusivos em medicina, psiquiatria e fisioterapia.",
+      a: "O colaborador paga um <b>valor fixo reduzido</b> em consultas com psicólogos e nutricionistas. Além disso, oferecemos <b>descontos exclusivos</b> em medicina, psiquiatria e fisioterapia.",
     },
     {
       q: "A empresa é obrigada a subsidiar as consultas dos colaboradores?",
-      a: "Não. A empresa paga um valor fixo por colaborador, sem precisar subsidiar o valor total ou parcial das consultas, gerando previsibilidade e economia para a empresa.",
+      a: "<b>Não.</b> A empresa paga um <b>valor fixo por colaborador</b>, sem precisar subsidiar o valor total ou parcial das consultas, gerando <b>previsibilidade e economia</b> para a empresa.",
     },
     {
       q: "Posso oferecer o benefício só para alguns colaboradores?",
-      a: "Sim. A empresa define quem será incluído no programa — pode ser apenas a liderança, um departamento específico ou toda a equipe.",
+      a: "Sim. <b>A empresa define quem será incluído</b> no programa — pode ser apenas a liderança, um departamento específico ou toda a equipe.",
     },
     {
       q: "O programa cobre apenas saúde mental ou outras especialidades também?",
-      a: "Além de psicólogos e psiquiatras, oferecemos atendimentos com nutricionistas, fisioterapeutas, médicos gerais e terapeutas integrativos.",
+      a: "Além de psicólogos e psiquiatras, oferecemos atendimentos com <b>nutricionistas, fisioterapeutas, médicos gerais e terapeutas integrativos</b>.",
     },
     {
       q: "Como a SouPlenus Corporate regulariza minha empresa conforme a NR-1?",
-      a: "A SouPlenus Corporate é uma medida de prevenção a riscos psicossociais, que pode ser documentada junto ao plano de ação do Programa de Gerenciamento de Riscos (PGR). Isso contribui diretamente para a conformidade com a norma.",
+      a: "A SouPlenus Corporate é uma <b>medida de prevenção a riscos psicossociais</b>, que pode ser documentada junto ao plano de ação do <b>Programa de Gerenciamento de Riscos (PGR)</b>. Isso contribui diretamente para a <b>conformidade com a NR-1</b>.",
     },
     {
       q: "Os dados dos colaboradores ficam seguros?",
-      a: "Sim. Todas as informações são tratadas com sigilo e em conformidade com a LGPD. Os dados são confidenciais, utilizados internamente apenas para fins informativos, de atendimento e suporte ao colaborador.",
+      a: "Sim. Todas as informações são tratadas com <b>sigilo</b> e em <b>conformidade com a LGPD</b>. Os dados são confidenciais, utilizados internamente apenas para fins informativos, de atendimento e suporte ao colaborador.",
     },
     {
       q: "Os profissionais são qualificados e monitorados?",
-      a: "Sim. Todos os profissionais parceiros passam por um processo de verificação e são monitorados continuamente pela SouPlenus para garantir a qualidade dos atendimentos.",
+      a: "Sim. Todos os profissionais parceiros passam por um <b>processo de verificação</b> e são <b>monitorados continuamente</b> pela SouPlenus para garantir a qualidade dos atendimentos.",
     },
     {
       q: "Quanto tempo leva para o programa estar ativo após a contratação?",
-      a: "Após o envio da lista de colaboradores, os acessos serão ativados em até 1 dia útil. Em seguida, entraremos em contato com os colaboradores orientando a utilização da plataforma.",
+      a: "Após o envio da lista de colaboradores, os acessos serão ativados em <b>até 1 dia útil</b>. Em seguida, entraremos em contato com os colaboradores orientando a utilização da plataforma.",
     },
     {
       q: "Em casos de demissão ou contratação, como funciona?",
-      a: "Quando ocorrer contratação ou demissão de algum colaborador, basta atualizar a lista de colaboradores beneficiados.",
+      a: "Quando ocorrer contratação ou demissão de algum colaborador, basta <b>atualizar a lista de colaboradores beneficiados</b>.",
     },
     {
       q: "Como é realizado o pagamento da consulta?",
-      a: "O pagamento é realizado diretamente pelo colaborador no ato do agendamento pela plataforma, por meio de Pix ou Cartão de Crédito.",
+      a: "O pagamento é realizado <b>diretamente pelo colaborador</b> no ato do agendamento pela plataforma, por meio de <b>Pix ou Cartão de Crédito</b>.",
     },
     {
       q: "Tem atendimento fora de Pelotas/RS?",
-      a: "Sim. As consultas online atendem colaboradores em qualquer cidade do Brasil. O atendimento presencial está disponível em Pelotas/RS.",
+      a: "Sim. As <b>consultas online</b> atendem colaboradores em <b>qualquer cidade do Brasil</b>. O atendimento presencial está disponível em Pelotas/RS.",
     },
   ]
 
