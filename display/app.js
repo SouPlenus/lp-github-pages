@@ -269,7 +269,7 @@ function renderRooms(now) {
         <span class="room__dot"></span>
       </div>
       <div class="room__name">
-        <span>${atual ? escapeHtml(atual.name) : 'Disponível'}</span>
+        <span>${atual ? escapeHtml(atual.name) : 'Disponível agora'}</span>
       </div>`;
     wrap.appendChild(card);
   }

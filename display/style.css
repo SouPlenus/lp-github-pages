@@ -20,7 +20,10 @@
 
   /* fundo do painel: preto sólido (cabeçalho, lista e faixa de salas) */
   --bg: #000;
-  --live: #2fd97b;
+  /* estado das salas: tons fechados, para contorno e texto lerem na faixa
+     branca atrás dos cards */
+  --livre: #2b695b;
+  --ocupada: #d64545;
 
   /* superfícies sobre o verde */
   --surface: rgba(255, 255, 255, .07);
@@ -181,11 +184,12 @@ body {
 
 .slot__hour span { margin: 0 .18em; }
 
-/* a linha ocupa o vão entre o título e a faixa de horário */
+/* a linha ocupa o vão entre o título e a faixa de horário, na mesma
+   espessura do contorno dos cards de sala */
 .slot__line {
   flex: 1 1 0;
   min-width: 0;
-  height: 1px;
+  height: 3px;
   background: var(--peach);
   margin: 0 1vw;
 }
@@ -245,11 +249,12 @@ body {
   padding: 1.7vh 0;
 }
 
-/* o traço ocupa o vão entre o nome e a sala */
+/* o traço ocupa o vão entre o nome e a sala, na mesma espessura do contorno
+   dos cards de sala */
 .card__line {
   flex: 1 1 0;
   min-width: 0;
-  height: 1px;
+  height: 3px;
   background: #fff;
   margin: 0 1.2vw;
 }
@@ -315,11 +320,11 @@ body {
 }
 
 .room {
-  /* cada sala é um card branco arredondado */
+  /* cada sala é um card branco, com o contorno na cor do estado */
   position: relative;
   background: #fff;
-  border: none;
-  border-radius: 12px;
+  border: 3px solid var(--ocupada);
+  border-radius: 14px;
   padding: 1.8vh 1.2vw;
   /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
      entre elas (uma ocupa tudo, duas ficam 50/50) */
@@ -349,19 +354,23 @@ body {
   height: .5em;
   margin-left: 1.2vw;
   border-radius: 50%;
-  background: #d64545;
+  background: var(--ocupada);
   font-size: clamp(26px, 2.2vw, 44px);
 }
 
-.room--free .room__dot { background: var(--green); }
+.room--free {
+  border-color: var(--livre);
+}
 
-.room--free .room__title { color: var(--green); }
+.room--free .room__dot { background: var(--livre); }
+
+.room--free .room__title { color: var(--livre); }
 
 .room__title {
   /* menor que a sala nos itens de próximos agendamentos */
   font-size: clamp(23px, 2vw, 40px);
   font-weight: 800;
-  color: #d64545;
+  color: var(--ocupada);
   text-transform: uppercase;
   letter-spacing: .04em;
   /* uma linha só: "Sala Plenus" quebrava em duas e desalinhava o tile */
