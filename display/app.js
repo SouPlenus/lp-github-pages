@@ -262,14 +262,16 @@ function renderRooms(now) {
     const card = document.createElement('div');
     card.className = 'room';
 
-    // em cima o profissional, embaixo a sala e o horário; o nome fica numa
-    // faixa de uma linha só e, se não couber, desliza (marquee)
+    // em cima a sala e o horário, com o traço puxando até o profissional
+    // embaixo; o nome fica numa faixa de uma linha só e, se não couber,
+    // desliza (marquee)
     card.innerHTML = `
-      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>
-      <div class="room__bottom">
+      <div class="room__top">
         <span class="room__title">${escapeHtml(room.title)}</span>
         <span class="room__hours">${fmtHour(atual.start)}<span>–</span>${fmtHour(atual.end)}</span>
-      </div>`;
+        <span class="room__line"></span>
+      </div>
+      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>`;
     wrap.appendChild(card);
   }
 
@@ -387,6 +389,7 @@ function renderList(now) {
     row.className = `card card--${status} card--${b.kind}`;
     row.innerHTML = `
       <div class="card__name">${escapeHtml(b.name)}</div>
+      <span class="card__line"></span>
       <div class="card__meta">
         <span class="card__room">${escapeHtml(b.room.title)}</span>
         <span class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</span>
