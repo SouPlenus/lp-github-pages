@@ -81,7 +81,8 @@ body {
   align-items: center;
 }
 
-.logo { height: 5vh; min-height: 34px; width: auto; display: block; }
+/* mesma altura do relógio ao lado */
+.logo { height: clamp(40px, 4.4vw, 82px); width: auto; display: block; }
 
 /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
 #date { margin-right: 1.4vw; }
@@ -96,13 +97,28 @@ body {
 }
 
 #date {
-  font-size: clamp(28px, 2.6vw, 50px);
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
+  text-align: right;
 }
 
-#date::first-letter { text-transform: uppercase; }
+/* as duas linhas somam 4.4vw, exatamente a altura do #clock ao lado */
+.date__weekday,
+.date__day {
+  display: block;
+  line-height: 1;
+}
+
+.date__weekday {
+  font-size: clamp(17px, 1.7vw, 32px);
+}
+
+.date__weekday::first-letter { text-transform: uppercase; }
+
+.date__day {
+  font-size: clamp(24px, 2.4vw, 44px);
+}
 
 .status {
   font-size: clamp(14px, 1.2vw, 22px);
@@ -111,7 +127,7 @@ body {
   margin-left: 1.2vw;
 }
 
-.status--error { color: var(--peach); font-weight: 700; }
+.status[hidden] { display: none; }
 
 /* ------------------------------------------------- agenda (sem moldura) */
 
@@ -199,12 +215,7 @@ body {
   white-space: nowrap;
 }
 
-/* `flex: 0 0 auto` é obrigatório: como item do .main, a divisória das salas
-   era espremida a poucos pixels pela lista, que pede toda a altura. */
-.main > .slot { flex: 0 0 auto; }
-
-/* nenhuma sala em uso: a faixa e a divisória dela saem da tela */
-.slot[hidden],
+/* nenhuma sala em uso: a faixa sai da tela */
 .rooms[hidden] { display: none; }
 
 /* Presa no topo, a divisória ganha um respiro extra embaixo: uma faixa da cor
@@ -253,7 +264,7 @@ body {
   flex: 1 1 0;
   min-width: 0;
   height: 1px;
-  background: #9e9e9e;
+  background: #fff;
   margin: 0 1.2vw;
 }
 
@@ -301,8 +312,8 @@ body {
 .card__room {
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-right: 1.2vw;
-  /* mesmo corpo do nome do profissional */
-  font-size: clamp(32px, 3vw, 60px);
+  /* um pouco menor que o nome do profissional */
+  font-size: clamp(27px, 2.5vw, 50px);
   font-weight: 800;
   color: var(--bg);
   background: var(--peach);
@@ -363,10 +374,6 @@ body {
   justify-content: flex-start;
 }
 
-/* o primeiro tile encosta na margem, alinhado com a divisória e com os nomes
-   da lista; os seguintes mantêm o recuo depois do traço */
-.room:first-child { padding-left: 0; }
-
 /* linha de cima: sala, horário e o traço que puxa até o nome, abaixo */
 .room__top {
   display: flex;
@@ -375,30 +382,26 @@ body {
   margin-bottom: .6vh;
 }
 
-/* o traço ocupa o resto da linha, no lugar da divisória entre os tiles */
+/* o traço ocupa o vão entre a sala e o "Agora" */
 .room__line {
   flex: 1 1 0;
   min-width: 0;
   height: 1px;
   background: #9e9e9e;
-  margin-left: 1.2vw;
+  margin: 0 1.2vw;
 }
 
 .room__hours {
-  margin-left: 1.2vw;
   font-size: clamp(22px, 1.9vw, 38px);
   font-weight: 800;
   color: #fff;
-  letter-spacing: -.03em;
   line-height: 1.1;
   white-space: nowrap;
 }
 
-.room__hours span { margin: 0 .18em; }
-
 .room__title {
-  /* mesmo corpo do nome do profissional */
-  font-size: clamp(32px, 3vw, 60px);
+  /* um pouco menor que o nome do profissional */
+  font-size: clamp(27px, 2.5vw, 50px);
   font-weight: 800;
   color: var(--bg);
   background: var(--peach);

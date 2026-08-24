@@ -17,6 +17,7 @@ const state = {
   token: null,
   rooms: [],
   roomStep: 0,      // largura de um tile de sala, com margens (0 = não roda)
+  roomPad: 0,       // recuo interno do tile, descontado da posição da faixa
   roomCount: 0,     // quantas salas formam uma volta do rodízio
   roomIndex: 0,     // tile que está na primeira posição
   blocks: [],       // agendamentos já agrupados
@@ -247,18 +248,17 @@ function statusOf(block, now) {
 function renderClock() {
   const d = new Date();
   el('#clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
-  el('#date').textContent = d.toLocaleDateString('pt-BR', {
-    weekday: 'long', day: '2-digit', month: 'long',
-  });
+  // duas linhas: o dia da semana menor, em cima; a data embaixo. Juntas têm
+  // a mesma altura do relógio ao lado.
+  const semana = d.toLocaleDateString('pt-BR', { weekday: 'long' });
+  const dia = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+  el('#date').innerHTML = `<span class="date__weekday">${semana},</span>`
+    + `<span class="date__day">${dia}</span>`;
 }
 
 function renderRooms(now) {
   const wrap = el('#rooms');
   wrap.innerHTML = '';
-
-  // divisória com a hora corrente, no mesmo estilo das da lista
-  const horaCheia = Math.floor(now / 60) * 60;
-  el('#rooms-slot').innerHTML = slotLabel(horaCheia, now, horaCheia + 60);
 
   // só as salas em uso agora entram na faixa; as livres ficam de fora
   for (const room of state.rooms) {
@@ -275,8 +275,8 @@ function renderRooms(now) {
     card.innerHTML = `
       <div class="room__top">
         <span class="room__title">${escapeHtml(room.title)}</span>
-        <span class="room__hours">${fmtHour(atual.start)}<span>–</span>${fmtHour(atual.end)}</span>
         <span class="room__line"></span>
+        <span class="room__hours">agora</span>
       </div>
       <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>`;
     wrap.appendChild(card);
@@ -289,10 +289,8 @@ function renderRooms(now) {
     tile.style.width = `calc(${(100 / colunas).toFixed(4)}% - .7vw)`;
   }
 
-  // sem ninguém em sala, a faixa e a divisória dela saem da tela
-  const vazia = !wrap.children.length;
-  el('.rooms').hidden = vazia;
-  el('#rooms-slot').hidden = vazia;
+  // sem ninguém em sala, a faixa sai da tela
+  el('.rooms').hidden = !wrap.children.length;
 
   // cópia da faixa: quando o rodízio chega ao fim da volta, o que está na
   // tela são as cópias — aí a faixa volta ao começo sem ninguém perceber
@@ -309,6 +307,13 @@ function renderRooms(now) {
   // passo do rodízio: distância entre um tile e o seguinte
   state.roomStep = wrap.children.length > 1
     ? wrap.children[1].offsetLeft - wrap.children[0].offsetLeft
+    : 0;
+
+  // recuo interno do tile: a faixa anda esse tanto a mais, para o tile que
+  // está na primeira posição encostar sempre na margem — sem ele, o texto
+  // aparecia deslocado a cada passo do rodízio
+  state.roomPad = wrap.children.length
+    ? parseFloat(getComputedStyle(wrap.children[0]).paddingLeft) || 0
     : 0;
 
   if (state.roomIndex >= state.roomCount) state.roomIndex = 0;
@@ -481,16 +486,14 @@ function escapeHtml(s) {
   ));
 }
 
+/**
+ * O painel não mostra a hora da última atualização; o status só aparece
+ * quando algo falhou, que é a única informação útil para quem está na TV.
+ */
 function renderStatus() {
   const s = el('#status');
-  if (state.error) {
-    s.className = 'status status--error';
-    s.textContent = state.error;
-  } else if (state.lastUpdate) {
-    s.className = 'status';
-    const when = `${pad(state.lastUpdate.getHours())}:${pad(state.lastUpdate.getMinutes())}`;
-    s.textContent = USE_MOCK ? `Dados de exemplo · ${when}` : `Atualizado às ${when}`;
-  }
+  s.hidden = !state.error;
+  if (state.error) s.textContent = state.error;
 }
 
 function render() {
@@ -505,8 +508,9 @@ function render() {
 
 /** Posiciona a faixa de salas no tile atual, com ou sem animação. */
 function placeRooms(wrap, animar) {
+  const x = state.roomIndex * state.roomStep + state.roomPad;
   wrap.style.transition = animar ? 'transform .7s ease' : 'none';
-  wrap.style.transform = `translateX(${-state.roomIndex * state.roomStep}px)`;
+  wrap.style.transform = `translateX(${-x}px)`;
 }
 
 /**
