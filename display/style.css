@@ -85,7 +85,7 @@ body {
 
 #clock {
   justify-self: start;
-  font-size: clamp(60px, 6.8vw, 124px);
+  font-size: clamp(40px, 4.4vw, 82px);
   font-weight: 700;
   color: #fff;
   line-height: 1;
@@ -94,7 +94,7 @@ body {
 }
 
 #date {
-  font-size: clamp(32px, 3.1vw, 60px);
+  font-size: clamp(22px, 2.1vw, 40px);
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
@@ -103,7 +103,7 @@ body {
 #date::first-letter { text-transform: uppercase; }
 
 .status {
-  font-size: clamp(22px, 1.8vw, 32px);
+  font-size: clamp(14px, 1.2vw, 22px);
   color: var(--muted);
   font-weight: 500;
   margin-top: .4vh;
@@ -175,20 +175,12 @@ body {
 .slot__rel {
   display: flex;
   align-items: center;
-  font-size: clamp(28px, 2.5vw, 50px);
+  font-size: clamp(18px, 1.6vw, 32px);
   font-weight: 600;
   letter-spacing: .01em;
   line-height: 1.1;
   color: #fff;
   white-space: nowrap;
-}
-
-/* "Acontecendo agora" pisca devagar, no lugar de um indicador separado */
-.slot__rel--live { animation: live-text 2.6s ease-in-out infinite; }
-
-@keyframes live-text {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: .35; }
 }
 
 /* `flex: 0 0 auto` é obrigatório: como item do .main, a divisória das salas
@@ -274,17 +266,14 @@ body {
   text-overflow: ellipsis;
 }
 
-/* esquerda: horário em caixa de destaque, igual à da sala */
+/* esquerda: horário, só o texto */
 .card__hours {
   justify-self: start;
   display: flex;
   align-items: center;
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: #fff;
-  background: var(--bg);
-  border-radius: 999px;
-  padding: .7vh .9vw;
+  color: var(--bg);
   /* mesmo espaçamento do relógio do cabeçalho (#clock) */
   letter-spacing: -.03em;
   line-height: 1.1;
@@ -294,17 +283,14 @@ body {
 .card__hours span { margin: 0 .18em; }
 
 
-/* direita: sala em caixa de destaque */
+/* direita: sala, só o texto */
 .card__room {
   justify-self: end;
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: #fff;
+  color: var(--bg);
   text-transform: uppercase;
   letter-spacing: .04em;
-  background: var(--bg);
-  border-radius: 999px;
-  padding: .7vh .9vw;
   line-height: 1.1;
   text-align: center;
   white-space: nowrap;
@@ -381,7 +367,7 @@ body {
 }
 
 .room__title {
-  font-size: clamp(22px, 1.9vw, 36px);
+  font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 700;
   color: var(--bg);
   text-transform: uppercase;
@@ -392,7 +378,7 @@ body {
 
 
 .room__name {
-  font-size: clamp(28px, 2.5vw, 50px);
+  font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
   color: var(--bg);
   line-height: 1.2;

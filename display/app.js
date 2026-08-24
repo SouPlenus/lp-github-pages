@@ -70,12 +70,10 @@ function relLabel(start, now) {
 
 /** Conteúdo de uma divisória: faixa de horário à esquerda, quanto falta à direita. */
 function slotLabel(start, now, end) {
-  const aoVivo = start <= now;
   const faixa = `${fmtHour(start)}<span>–</span>${fmtHour(end || start + 60)}`;
   return `<span class="slot__hour">${faixa}</span>`
     + `<span class="slot__line"></span>`
-    + `<span class="slot__rel${aoVivo ? ' slot__rel--live' : ''}">`
-    + `${relLabel(start, now)}</span>`;
+    + `<span class="slot__rel">${relLabel(start, now)}</span>`;
 }
 
 /**
