@@ -218,7 +218,6 @@ body {
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.3vh;
   align-items: stretch;
   /* mesmo respiro dos dois lados da divisória: abaixo dela (padding-top) e
      até a divisória do horário seguinte (padding-bottom) */
@@ -233,25 +232,15 @@ body {
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 1vw;
-  padding: 1.7vh 1.2vw;
-  border-radius: 8px;
-  border: 1px solid transparent;
-  background: #fff;
-  transition: opacity .3s;
+  /* sem caixa: cada linha é só o texto e o traço que a separa da seguinte.
+     O recuo lateral zerado alinha o horário com o da divisória. */
+  padding: 1.7vh 0;
+  border-bottom: 1px solid rgba(255, 255, 255, .18);
 }
 
-.card--past { opacity: .34; }
-
-/* em andamento: mesmo card branco, destacado por um anel pêssego pulsante */
-.card--now {
-  border-color: var(--peach);
-  animation: live-ring 2.6s ease-in-out infinite;
-}
-
-@keyframes live-ring {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 187, 170, .5); }
-  50%      { box-shadow: 0 0 0 3px rgba(255, 187, 170, .1); }
-}
+/* a última linha do bloco dispensa o traço: logo abaixo vem a divisória do
+   horário seguinte */
+.grid .card:last-child { border-bottom: none; }
 
 /* direita: profissional · sala */
 .card__right {
@@ -266,7 +255,7 @@ body {
   margin: 0 .35em;
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--bg);
+  color: #fff;
 }
 
 .card__name {
@@ -275,7 +264,7 @@ body {
   /* maior que o horário e a sala: é a informação que se lê de longe */
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
-  color: var(--bg);
+  color: #fff;
   line-height: 1.15;
   letter-spacing: -.015em;
   /* uma linha só: na TV o nome quebrava em duas e desalinhava a lista */
@@ -291,7 +280,7 @@ body {
   align-items: center;
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--bg);
+  color: #fff;
   /* mesmo espaçamento do relógio do cabeçalho (#clock) */
   letter-spacing: -.03em;
   line-height: 1.1;
@@ -305,7 +294,7 @@ body {
 .card__room {
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--bg);
+  color: var(--peach);
   text-transform: uppercase;
   letter-spacing: .04em;
   line-height: 1.1;
@@ -346,8 +335,9 @@ body {
 }
 
 .room {
-  background: #fff;
-  border: 1px solid transparent;
+  /* outlined: só o contorno, como as linhas da lista */
+  background: none;
+  border: 1px solid rgba(255, 255, 255, .35);
   border-radius: 8px;
   padding: 1.1vh .9vw;
   /* três por tela, alinhados com os cards da lista: largura útil (100vw menos
@@ -376,7 +366,7 @@ body {
 .room__title {
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 700;
-  color: var(--bg);
+  color: var(--muted);
   text-transform: uppercase;
   letter-spacing: .1em;
   min-width: 0;
@@ -387,7 +377,7 @@ body {
 .room__name {
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
-  color: var(--bg);
+  color: #fff;
   line-height: 1.2;
   letter-spacing: -.01em;
   /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */
