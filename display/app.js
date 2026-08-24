@@ -54,17 +54,24 @@ function fmtHour(minutes) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
-/** "Acontecendo agora" / "Agendamentos daqui a 25 minutos" / "… a 2h30" */
+/** "Acontecendo agora" / "Próximos agendamentos · Faltam 25 minutos" */
 function relLabel(start, now) {
   const falta = start - now;
   if (falta <= 0) return 'Acontecendo agora';
-  if (falta === 1) return 'Agendamentos daqui a 1 minuto';
-  if (falta < 60) return `Agendamentos daqui a ${falta} minutos`;
+
+  const verbo = falta === 1 || (falta >= 60 && falta < 120) ? 'Falta' : 'Faltam';
+  return `Próximos agendamentos · ${verbo} ${tempoRestante(falta)}`;
+}
+
+/** "1 minuto" / "25 minutos" / "2h30" / "2 horas" */
+function tempoRestante(falta) {
+  if (falta === 1) return '1 minuto';
+  if (falta < 60) return `${falta} minutos`;
 
   const horas = Math.floor(falta / 60);
   const minutos = falta % 60;
-  if (minutos) return `Agendamentos daqui a ${horas}h${pad(minutos)}`;
-  return `Agendamentos daqui a ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+  if (minutos) return `${horas}h${pad(minutos)}`;
+  return `${horas} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
 /** Conteúdo de uma divisória: quanto falta à esquerda, faixa de horário à direita. */
@@ -255,14 +262,22 @@ function renderRooms(now) {
     const card = document.createElement('div');
     card.className = 'room';
 
-    // em cima a sala, embaixo o profissional; o nome fica numa faixa de uma
-    // linha só e, se não couber, desliza (marquee)
+    // em cima o profissional, embaixo a sala e o horário; o nome fica numa
+    // faixa de uma linha só e, se não couber, desliza (marquee)
     card.innerHTML = `
-      <div class="room__top">
-        <div class="room__title">${escapeHtml(room.title)}</div>
-      </div>
-      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>`;
+      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>
+      <div class="room__bottom">
+        <span class="room__title">${escapeHtml(room.title)}</span>
+        <span class="room__hours">${fmtHour(atual.start)}<span>–</span>${fmtHour(atual.end)}</span>
+      </div>`;
     wrap.appendChild(card);
+  }
+
+  // a faixa é dividida entre as salas em uso, no máximo três por tela: uma
+  // ocupa tudo, duas ficam 50/50, três ou mais entram no rodízio horizontal
+  const colunas = Math.min(wrap.children.length, 3) || 1;
+  for (const tile of [].slice.call(wrap.children)) {
+    tile.style.width = `calc(${(100 / colunas).toFixed(4)}% - .7vw)`;
   }
 
   // sem ninguém em sala, a faixa e a divisória dela saem da tela
@@ -371,12 +386,11 @@ function renderList(now) {
     const row = document.createElement('article');
     row.className = `card card--${status} card--${b.kind}`;
     row.innerHTML = `
-      <div class="card__who">
-        <span class="card__name">${escapeHtml(b.name)}</span>
-        <span class="card__dot">·</span>
+      <div class="card__name">${escapeHtml(b.name)}</div>
+      <div class="card__meta">
         <span class="card__room">${escapeHtml(b.room.title)}</span>
-      </div>
-      <div class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</div>`;
+        <span class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</span>
+      </div>`;
     grid.appendChild(row);
   }
 

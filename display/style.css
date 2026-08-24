@@ -244,19 +244,11 @@ body {
    horário seguinte */
 .grid .card:last-child { border-bottom: none; }
 
-/* esquerda: profissional · sala */
-.card__who {
-  justify-self: start;
-  min-width: 0;
+/* direita: sala e horário */
+.card__meta {
+  justify-self: end;
   display: flex;
-  align-items: baseline;
-}
-
-.card__dot {
-  margin: 0 .35em;
-  font-size: clamp(28px, 2.4vw, 48px);
-  font-weight: 800;
-  color: #fff;
+  align-items: center;
 }
 
 .card__name {
@@ -274,9 +266,8 @@ body {
   text-overflow: ellipsis;
 }
 
-/* direita: horário, só o texto */
+/* ponta direita: horário, só o texto */
 .card__hours {
-  justify-self: end;
   display: flex;
   align-items: center;
   font-size: clamp(28px, 2.4vw, 48px);
@@ -291,11 +282,16 @@ body {
 .card__hours span { margin: 0 .18em; }
 
 
-/* sala, logo depois do nome */
+/* sala em badge rosa, à esquerda do horário */
 .card__room {
-  font-size: clamp(28px, 2.4vw, 48px);
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin-right: 1.2vw;
+  font-size: clamp(22px, 1.9vw, 38px);
   font-weight: 800;
-  color: var(--peach);
+  color: var(--bg);
+  background: var(--peach);
+  border-radius: 999px;
+  padding: .5vh .8vw;
   text-transform: uppercase;
   letter-spacing: .04em;
   line-height: 1.1;
@@ -331,47 +327,71 @@ body {
   min-width: 0;
   /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin: 0 -.35vw;
-  /* espaço em cima e embaixo para o anel da sala em uso não ser cortado */
   padding: 3px 0;
 }
 
 .room {
   /* sem caixa: os tiles são separados por um traço, como as linhas da lista */
+  position: relative;
   background: none;
   border: none;
   padding: 1.1vh .9vw;
-  /* três por tela, alinhados com os cards da lista: largura útil (100vw menos
-     o recuo do .app, mais a margem negativa do #rooms) dividida por três, já
-     descontadas as margens laterais de cada tile */
+  /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
+     entre elas (uma ocupa tudo, duas ficam 50/50) */
   flex: 0 0 auto;
-  width: calc((100vw - 4.5vw) / 3 - .7vw);
+  width: calc(100% / 3 - .7vw);
   margin: 0 .35vw;
   display: flex;
   flex-direction: column;
-  /* sala encostada no topo, profissional encostado na base */
+  /* profissional em cima, sala e horário embaixo */
   justify-content: space-between;
 }
 
-/* uma linha entre um tile e o seguinte */
-.room + .room { border-left: 1px solid #9e9e9e; }
-
-/* margem no lugar de `gap`: mesmo motivo do #rooms */
-.room__top { margin-bottom: .6vh; }
-
-/* linha de cima: nome da sala + ponto no canto superior direito */
-.room__top {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: .45vw;
+/* traço entre um tile e o seguinte, no meio exato do vão (o `border-left`
+   ficava colado no tile de baixo, meia margem fora do centro) */
+.room + .room::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -.35vw;
+  width: 1px;
+  background: #9e9e9e;
 }
 
+/* o primeiro tile encosta na margem, alinhado com a divisória e com os nomes
+   da lista; os seguintes mantêm o recuo depois do traço */
+.room:first-child { padding-left: 0; }
+
+/* linha de baixo: sala e, ao lado, o horário */
+.room__bottom {
+  display: flex;
+  align-items: center;
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin-top: .6vh;
+}
+
+.room__hours {
+  margin-left: 1.2vw;
+  font-size: clamp(22px, 1.9vw, 38px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.room__hours span { margin: 0 .18em; }
+
 .room__title {
-  font-size: clamp(28px, 2.4vw, 48px);
-  font-weight: 700;
-  color: var(--muted);
+  font-size: clamp(22px, 1.9vw, 38px);
+  font-weight: 800;
+  color: var(--bg);
+  background: var(--peach);
+  border-radius: 999px;
+  padding: .5vh .8vw;
   text-transform: uppercase;
-  letter-spacing: .1em;
+  letter-spacing: .04em;
   min-width: 0;
 }
 
@@ -421,11 +441,6 @@ body {
 }
 
 /* telas menores / portrait */
-@media (max-width: 900px) {
-  /* telas estreitas: duas por tela, o rodízio segue igual */
-  .room { width: calc((100vw - 4.5vw) / 2 - .7vw); }
-}
-
 /* ---------------------------------------------------------------- login */
 
 .login {
