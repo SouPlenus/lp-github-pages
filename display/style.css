@@ -247,8 +247,7 @@ body {
 }
 
 .card {
-  /* profissional na esquerda, sala e horário na direita, ligados pelo traço
-     do meio. Sem recuo lateral, o horário alinha com o da divisória. */
+  /* profissional na esquerda e sala na direita, ligados pelo traço do meio */
   display: flex;
   align-items: center;
   padding: 1.7vh 0;

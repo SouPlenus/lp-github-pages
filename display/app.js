@@ -331,9 +331,9 @@ function renderList(now) {
   const keepScroll = list.scrollTop;   // não interrompe a rolagem automática
   list.innerHTML = '';
 
-  // a lista mostra o que ainda vai começar: o horário em andamento já aparece
-  // na faixa de salas, logo abaixo do cabeçalho
-  const doDia = state.blocks.filter((b) => b.start > now);
+  // a lista mostra o que está acontecendo agora e o que ainda vai começar;
+  // só os atendimentos já encerrados ficam de fora
+  const doDia = state.blocks.filter((b) => b.end > now);
 
   if (!doDia.length) {
     const encerrado = state.blocks.length > 0;
