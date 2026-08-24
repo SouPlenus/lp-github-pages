@@ -404,6 +404,7 @@ function renderList(now) {
       <span class="card__line"></span>
       <div class="card__meta">
         <span class="card__room">${escapeHtml(b.room.title)}</span>
+        <span class="card__sep">·</span>
         <span class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</span>
       </div>`;
     grid.appendChild(row);
@@ -656,6 +657,13 @@ async function start() {
 async function main() {
   render();
   setInterval(renderClock, 30000);   // relógio anda mesmo na tela de login
+
+  // as fontes chegam depois do primeiro render: com a fonte de fallback os
+  // textos têm outra largura, e é dela que saem a posição da linha das
+  // divisórias e o deslize dos nomes longos
+  if (window.document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => render());
+  }
 
   if (!USE_MOCK && !hasCredentials()) {
     setupLogin();

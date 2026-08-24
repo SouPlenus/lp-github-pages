@@ -112,9 +112,8 @@ body {
 
 .date__weekday {
   font-size: clamp(17px, 1.7vw, 32px);
+  color: #9e9e9e;
 }
-
-.date__weekday::first-letter { text-transform: uppercase; }
 
 .date__day {
   font-size: clamp(24px, 2.4vw, 44px);
@@ -196,15 +195,16 @@ body {
 
 .slot__hour span { margin: 0 .18em; }
 
-/* meio: linha que liga o rótulo à faixa de horário */
+/* a linha ocupa o vão entre o título e a faixa de horário */
 .slot__line {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   height: 1px;
   background: #9e9e9e;
   margin: 0 1vw;
 }
 
-/* esquerda: "Acontecendo agora" / "Daqui a 40 minutos" */
+/* esquerda: "Próximos agendamentos" / "Acontecendo agora" */
 .slot__rel {
   display: flex;
   align-items: center;
@@ -292,6 +292,15 @@ body {
   text-overflow: ellipsis;
 }
 
+/* ponto entre a sala e o horário */
+.card__sep {
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin: 0 .5vw;
+  font-size: clamp(28px, 2.4vw, 48px);
+  font-weight: 800;
+  color: #fff;
+}
+
 /* ponta direita: horário, só o texto */
 .card__hours {
   display: flex;
@@ -308,17 +317,11 @@ body {
 .card__hours span { margin: 0 .18em; }
 
 
-/* sala em badge rosa, à esquerda do horário */
+/* sala em rosa, à esquerda do horário, no mesmo corpo dele */
 .card__room {
-  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin-right: 1.2vw;
-  /* um pouco menor que o nome do profissional */
-  font-size: clamp(27px, 2.5vw, 50px);
+  font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--bg);
-  background: var(--peach);
-  border-radius: 999px;
-  padding: .5vh .8vw;
+  color: var(--peach);
   text-transform: uppercase;
   letter-spacing: .04em;
   line-height: 1.1;
@@ -352,8 +355,10 @@ body {
   flex-wrap: nowrap;
   flex: 1 1 auto;
   min-width: 0;
-  /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin: 0 -.35vw;
+  /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV.
+     A faixa ganha à direita a mesma sobra que o deslocamento do rodízio
+     (o recuo interno do tile) come — assim o último tile encosta na margem. */
+  margin: 0 calc(-.35vw - .9vw) 0 -.35vw;
   padding: 3px 0;
 }
 
@@ -362,7 +367,10 @@ body {
   position: relative;
   background: none;
   border: none;
-  padding: 1.1vh .9vw .4vh;
+  /* sem recuo à direita: o "agora" do último tile encosta na margem, como o
+     horário dos itens da lista. O recuo da esquerda é devolvido pelo
+     deslocamento da faixa (state.roomPad), então o primeiro também encosta. */
+  padding: 1.1vh 0 .4vh .9vw;
   /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
      entre elas (uma ocupa tudo, duas ficam 50/50) */
   flex: 0 0 auto;
@@ -393,20 +401,17 @@ body {
 
 .room__hours {
   font-size: clamp(22px, 1.9vw, 38px);
-  font-weight: 800;
-  color: #fff;
+  font-weight: 600;
+  color: #9e9e9e;
   line-height: 1.1;
   white-space: nowrap;
 }
 
 .room__title {
-  /* um pouco menor que o nome do profissional */
-  font-size: clamp(27px, 2.5vw, 50px);
+  /* mesmo corpo da sala nos itens de próximos agendamentos */
+  font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--bg);
-  background: var(--peach);
-  border-radius: 999px;
-  padding: .5vh .8vw;
+  color: var(--peach);
   text-transform: uppercase;
   letter-spacing: .04em;
   /* uma linha só: "Sala Plenus" quebrava em duas e desalinhava o tile */
