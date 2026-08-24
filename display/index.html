@@ -4,27 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=121">
+  <link rel="stylesheet" href="style.css?v=129">
 </head>
 <body>
   <div class="app">
+    <!-- ícone, relógio e data à esquerda; no que sobra, a faixa de salas -->
     <header class="header">
-      <div class="header__left">
-        <img class="logo" src="assets/logo-display.svg" alt="SouPlenus">
-        <div id="status" class="status" hidden></div>
-      </div>
-      <div class="header__right">
-        <div id="date"></div>
-        <div id="clock">--:--</div>
-      </div>
-    </header>
+      <img class="logo" src="assets/logo-display-icon.svg" alt="SouPlenus">
+      <div id="clock">--:--</div>
+      <div id="date"></div>
+      <div id="status" class="status" hidden></div>
 
-    <main class="main">
-      <!-- salas logo abaixo do cabeçalho: quem está em cada sala AGORA -->
+      <!-- quem está em cada sala AGORA -->
       <section class="rooms">
         <div id="rooms"></div>
       </section>
+    </header>
 
+    <main class="main">
       <!-- lista rolando: só o que ainda vai começar -->
       <section class="agenda">
         <div class="agenda__scroll" id="list"></div>
@@ -57,8 +54,8 @@
 
   <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
   <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=121"></script>
-  <script src="mock.js?v=121"></script>
-  <script src="app.js?v=121"></script>
+  <script src="config.js?v=129"></script>
+  <script src="mock.js?v=129"></script>
+  <script src="app.js?v=129"></script>
 </body>
 </html>

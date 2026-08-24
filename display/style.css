@@ -71,23 +71,27 @@ body {
 }
 
 .header {
-  /* logo e "Atualizado às…" à esquerda; data e, na ponta, o relógio */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header__left,
-.header__right {
+  /* ícone, relógio e data à esquerda; a faixa de salas ocupa o que sobra */
   display: flex;
   align-items: center;
 }
 
-/* mesma altura do relógio ao lado */
-.logo { height: clamp(40px, 4.4vw, 82px); width: auto; display: block; }
+/* altura casada com a dos dígitos do relógio (menor que o corpo da fonte) */
+.logo {
+  height: clamp(30px, 3.2vw, 60px);
+  width: auto;
+  display: block;
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin-right: .6vw;
+}
 
-/* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-#date { margin-right: 1.4vw; }
+/* o cabeçalho não pode espremer o relógio nem a data: quem cede espaço para
+   a faixa de salas é a própria faixa */
+#clock,
+#date,
+.logo { flex: 0 0 auto; }
+
+#date { margin: 0 2.4vw 0 1.2vw; }
 
 #clock {
   font-size: clamp(40px, 4.4vw, 82px);
@@ -95,14 +99,13 @@ body {
   color: #fff;
   line-height: 1;
   letter-spacing: -.03em;
-  padding: 1.4vh 0;
 }
 
 #date {
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
-  text-align: right;
+  text-align: left;
 }
 
 /* as duas linhas somam 4.4vw, exatamente a altura do #clock ao lado */
@@ -110,6 +113,7 @@ body {
 .date__day {
   display: block;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .date__weekday {
@@ -125,7 +129,7 @@ body {
   font-size: clamp(14px, 1.2vw, 22px);
   color: var(--muted);
   font-weight: 500;
-  margin-left: 1.2vw;
+  margin-right: 1.2vw;
 }
 
 .status[hidden] { display: none; }
@@ -295,12 +299,14 @@ body {
 /* --------------------------------------------------------- coluna salas */
 
 .rooms {
-  flex: 0 0 auto;
+  /* ocupa o espaço que sobra no cabeçalho */
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   /* respiro dos dois lados: acima separa do cabeçalho; abaixo, da divisória
      dos próximos agendamentos */
-  padding: 1.6vh 0 1.8vh;
-  /* janela do rodízio: corta exatamente nas margens do painel. Não precisa de
+  padding: 0;
+  /* janela do rodízio: corta exatamente nas bordas da faixa. Não precisa de
      folga: o que encosta na borda esquerda é o traço da sala, não o texto. */
   overflow: hidden;
 }
@@ -324,11 +330,11 @@ body {
   position: relative;
   background: none;
   border: none;
-  padding: 1.8vh 0 1.8vh 1.2vw;
-  /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
-     entre elas (uma ocupa tudo, duas ficam 50/50) */
+  padding: .6vh 0 .6vh 1vw;
+  /* no máximo duas por tela; com uma sala só, ela ocupa a faixa inteira (a
+     largura final vem do JS, pela quantidade) */
   flex: 0 0 auto;
-  width: calc(100% / 3);
+  width: calc(100% / 2);
   display: flex;
   flex-direction: column;
   /* sala e horário em cima, profissional embaixo */
@@ -349,8 +355,8 @@ body {
 .room::before {
   content: '';
   position: absolute;
-  top: 1.8vh;
-  bottom: 1.8vh;
+  top: .6vh;
+  bottom: .6vh;
   left: 0;
   width: 3px;
   background: var(--ocupada);
@@ -364,7 +370,7 @@ body {
   flex: 0 0 auto;
   width: .5em;
   height: .5em;
-  margin-right: .4em;
+  margin-left: .4em;
   border-radius: 50%;
   background: var(--ocupada);
   font-size: clamp(26px, 2.2vw, 44px);
@@ -375,8 +381,7 @@ body {
 .room--free .room__title { color: var(--livre); }
 
 .room__title {
-  /* menor que a sala nos itens de próximos agendamentos */
-  font-size: clamp(23px, 2vw, 40px);
+  font-size: clamp(20px, 1.75vw, 35px);
   font-weight: 800;
   color: var(--ocupada);
   text-transform: uppercase;

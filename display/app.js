@@ -242,7 +242,9 @@ function renderClock() {
   el('#clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
   // duas linhas: o dia da semana menor, em cima; a data embaixo. Juntas têm
   // a mesma altura do relógio ao lado.
-  const semana = d.toLocaleDateString('pt-BR', { weekday: 'long' });
+  // "segunda-feira" vira "segunda"; sábado e domingo não têm o sufixo
+  const semana = d.toLocaleDateString('pt-BR', { weekday: 'long' })
+    .replace('-feira', '');
   const dia = d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
   el('#date').innerHTML = `<span class="date__weekday">${semana},</span>`
     + `<span class="date__day">${dia}</span>`;
@@ -265,8 +267,8 @@ function renderRooms(now) {
     // desliza (marquee)
     card.innerHTML = `
       <div class="room__top">
-        <span class="room__dot"></span>
         <span class="room__title">${escapeHtml(room.title)}</span>
+        <span class="room__dot"></span>
       </div>
       <div class="room__name">
         <span>${atual ? escapeHtml(atual.name) : 'Disponível agora'}</span>
@@ -274,9 +276,9 @@ function renderRooms(now) {
     wrap.appendChild(card);
   }
 
-  // a faixa é dividida entre as salas em uso, no máximo três por tela: uma
-  // ocupa tudo, duas ficam 50/50, três ou mais entram no rodízio horizontal
-  const colunas = Math.min(wrap.children.length, 3) || 1;
+  // a faixa é dividida entre as salas, no máximo duas por tela: uma ocupa
+  // tudo, duas ficam 50/50, três ou mais entram no rodízio horizontal
+  const colunas = Math.min(wrap.children.length, 2) || 1;
   for (const tile of [].slice.call(wrap.children)) {
     tile.style.width = `${(100 / colunas).toFixed(4)}%`;
   }
