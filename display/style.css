@@ -1,0 +1,422 @@
+/* ============================================================
+   Painel de Salas — tema institucional SouPlenus
+   Paleta e tipografia herdadas do hero (mockups/static).
+   ============================================================ */
+
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-Light.otf')     format('opentype'); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-Medium.otf')    format('opentype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-DemiBold.otf')  format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-Bold.otf')      format('opentype'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-ExtraBold.otf') format('opentype'); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Visby CF'; src: url('assets/fonts/VisbyCF-Heavy.otf')     format('opentype'); font-weight: 900; font-style: normal; font-display: swap; }
+
+:root {
+  --green: #2b695b;
+  --green-deep: #1f5044;
+  --green-soft: #357a69;
+  --peach: #ffbbaa;
+  --accent-deep: #f4a085;
+  --ink: #16241f;
+
+  /* superfícies sobre o verde */
+  --surface: rgba(255, 255, 255, .07);
+  --surface-2: rgba(255, 255, 255, .12);
+  --line: rgba(255, 255, 255, .14);
+  --muted: rgba(255, 255, 255, .62);
+
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--green);
+  color: #fff;
+  font-family: 'Visby CF', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------- estrutura */
+
+.app {
+  position: relative;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+
+  /* faixas reservadas ao cabeçalho e às salas, por onde os cards passam
+     por baixo, esmaecidos pelo gradiente da lista */
+  --head-band: 20vh;
+  --rooms-band: 21vh;
+}
+
+/* cabeçalho e faixa de salas flutuam sobre a lista */
+.header {
+  position: absolute;
+  z-index: 3;
+  top: 2.2vh;
+  left: 2.6vw;
+  right: 2.6vw;
+}
+
+/* véu verde no topo: sem barra sólida, só contraste para o cabeçalho */
+.header::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -2.2vh;
+  left: -2.6vw;
+  right: -2.6vw;
+  bottom: -6vh;
+  background: linear-gradient(
+    to bottom,
+    var(--green) 0,
+    var(--green) 55%,
+    rgba(43, 105, 91, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.main { position: absolute; inset: 0; z-index: 2; padding: 0 2.6vw; }
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 2vw;
+}
+
+.header__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .4vh;
+}
+
+.logo { height: 5vh; min-height: 34px; width: auto; display: block; }
+
+.header__title {
+  font-size: clamp(18px, 1.7vw, 32px);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+
+.header__sub {
+  font-size: clamp(11px, .9vw, 16px);
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: .01em;
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1vw;
+}
+
+.header__meta { text-align: right; }
+
+#clock {
+  font-size: clamp(30px, 3.4vw, 62px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -.03em;
+  padding: 1.4vh 0;
+}
+
+#date {
+  font-size: clamp(16px, 1.55vw, 30px);
+  color: var(--peach);
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+
+#date::first-letter { text-transform: uppercase; }
+
+.status {
+  font-size: clamp(11px, .9vw, 16px);
+  color: var(--muted);
+  font-weight: 500;
+  margin-top: .4vh;
+}
+
+.status--error { color: var(--peach); font-weight: 700; }
+
+.main { display: block; }
+
+/* ------------------------------------------------- agenda (sem moldura) */
+
+.agenda {
+  display: grid;
+  height: 100%;
+  min-height: 0;
+}
+
+/* rolagem com fade em gradiente no topo e na base */
+.agenda__scroll {
+  overflow-y: auto;
+  height: 100%;
+  min-height: 0;
+  /* o recuo lateral existe só para o anel do card--now não ser cortado pelo
+     overflow; a margem negativa devolve o alinhamento com o cabeçalho.
+     em cima/embaixo, o recuo posiciona o primeiro e o último card fora das
+     faixas do cabeçalho e das salas */
+  padding: var(--head-band) .45vw var(--rooms-band);
+  margin: 0 -.45vw;
+  scrollbar-width: none;
+  /* gradientes longos: o card some aos poucos e ainda aparece um pouco atrás
+     do cabeçalho e da faixa de salas */
+  --mask: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, .5) calc(var(--head-band) - 6vh),
+    #000 calc(var(--head-band) + 5vh),
+    #000 calc(100% - var(--rooms-band) - 4vh),
+    rgba(0, 0, 0, .5) calc(100% - var(--rooms-band) + 5vh),
+    transparent 100%
+  );
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+}
+
+.agenda__scroll::-webkit-scrollbar { display: none; }
+
+
+/* --------------------------------------------------------- separador hora */
+
+.slot {
+  font-size: clamp(16px, 1.5vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -.03em;
+  /* mesmo respiro do intervalo entre cards (gap do .grid), em cima e embaixo */
+  margin: 1.3vh 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8vw;
+}
+
+.slot--past { opacity: .4; }
+
+/* linha dos dois lados do horário */
+.slot::before,
+.slot::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, .5);
+}
+
+/* ---------------------------------------------------------------- cards */
+
+/* faixa duplicada pelo auto-scroll (loop infinito) */
+.loop { display: flow-root; }
+
+/* cards empilhados, um abaixo do outro */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.3vh;
+  align-items: stretch;
+}
+
+.card {
+  /* colunas laterais de largura idêntica (1fr): o nome fica exatamente no
+     centro do card, não importa o tamanho das badges de horário e sala */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1vw;
+  padding: 1.7vh 1.2vw;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .13);
+  transition: opacity .3s;
+}
+
+.card--past { opacity: .34; }
+
+/* em andamento: mesmo card branco, destacado por um anel pêssego pulsante */
+.card--now {
+  border-color: var(--peach);
+  animation: live-ring 2.6s ease-in-out infinite;
+}
+
+@keyframes live-ring {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 187, 170, .5), 0 12px 34px rgba(0, 0, 0, .18); }
+  50%      { box-shadow: 0 0 0 3px rgba(255, 187, 170, .1), 0 12px 34px rgba(0, 0, 0, .18); }
+}
+
+/* centro: profissional */
+.card__name {
+  min-width: 0;
+  text-align: center;
+  font-size: clamp(14px, 1.2vw, 24px);
+  font-weight: 700;
+  color: var(--green-deep);
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  overflow-wrap: anywhere;
+}
+
+/* esquerda: horário, mesmo corpo do texto da sala */
+.card__hours {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  font-size: clamp(11px, .95vw, 19px);
+  font-weight: 800;
+  color: var(--green);
+  /* mesmo espaçamento do relógio do cabeçalho (#clock) */
+  letter-spacing: -.03em;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.card__hours span { color: var(--green); margin: 0 .18em; }
+
+
+/* direita: sala em caixa de destaque */
+.card__room {
+  justify-self: end;
+  /* mesmo corpo do horário (.card__hours) */
+  font-size: clamp(13px, 1.15vw, 24px);
+  font-weight: 800;
+  color: var(--green-deep);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  background: var(--peach);
+  border-radius: 999px;
+  padding: 1vh 1.1vw;
+  line-height: 1.1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------- coluna salas */
+
+.rooms {
+  position: absolute;
+  z-index: 3;
+  left: 2.6vw;
+  right: 2.6vw;
+  bottom: 3vh;
+  display: flex;
+}
+
+#rooms {
+  display: flex;
+  flex-direction: row;
+  gap: .7vw;
+  flex: 1;
+  min-width: 0;
+  /* visible: o anel da sala em uso não pode ser cortado em cima/embaixo */
+  overflow: visible;
+}
+
+.room {
+  background: #fff;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 1.1vh .9vw;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  /* sala encostada no topo, profissional encostado na base */
+  justify-content: space-between;
+  gap: .6vh;
+}
+
+.room--busy {
+  border-color: var(--peach);
+  animation: live-ring-flat 2.6s ease-in-out infinite;
+}
+
+@keyframes live-ring-flat {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 187, 170, .5); }
+  50%      { box-shadow: 0 0 0 3px rgba(255, 187, 170, .1); }
+}
+
+/* linha de cima: nome da sala + ponto no canto superior direito */
+.room__top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: .45vw;
+}
+
+.room__title {
+  font-size: clamp(9px, .78vw, 14px);
+  font-weight: 700;
+  color: var(--green-deep);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  min-width: 0;
+}
+
+
+
+.room__name {
+  font-size: clamp(12px, 1vw, 20px);
+  font-weight: 700;
+  color: var(--green-deep);
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.room__name > span { display: inline-block; }
+
+.room__name--marquee > span {
+  animation: room-marquee 7s ease-in-out infinite;
+}
+
+@keyframes room-marquee {
+  0%, 10%   { transform: translateX(0); }
+  50%, 60%  { transform: translateX(var(--shift)); }
+  100%      { transform: translateX(0); }
+}
+
+.room__free { font-weight: 700; }
+
+/* sala livre: rótulo e texto mais apagados que os tiles ocupados */
+.room:not(.room--busy) .room__title,
+.room:not(.room--busy) .room__name { opacity: .45; }
+
+/* ---------------------------------------------------------------- vazio */
+
+.empty {
+  text-align: center;
+  padding: 12vh 0;
+}
+
+.empty__title {
+  font-size: clamp(20px, 2vw, 38px);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -.02em;
+}
+
+.empty__sub {
+  font-size: clamp(12px, 1vw, 19px);
+  color: var(--muted);
+  margin-top: 1.2vh;
+}
+
+/* telas menores / portrait */
+@media (max-width: 900px) {
+  #rooms { flex-wrap: wrap; }
+}

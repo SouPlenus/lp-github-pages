@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agendamentos de hoje · SouPlenus</title>
+  <link rel="stylesheet" href="style.css?v=2">
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="header__left">
+        <div class="header__title">Agendamentos de hoje</div>
+        <div class="header__sub">Em caso de divergência, consulte a recepção.</div>
+      </div>
+      <img class="logo" src="assets/logo-display.svg" alt="SouPlenus">
+      <div class="header__right">
+        <div class="header__meta">
+          <div id="date"></div>
+          <div id="status" class="status">Carregando…</div>
+        </div>
+        <div id="clock">--:--</div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="agenda">
+        <div class="agenda__scroll" id="list"></div>
+      </section>
+
+      <section class="rooms">
+        <div id="rooms"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
+  <script src="config.local.js" onerror="void 0"></script>
+  <script src="config.js?v=2"></script>
+  <script src="mock.js?v=2"></script>
+  <script src="app.js?v=2"></script>
+</body>
+</html>
