@@ -166,25 +166,11 @@ body {
   display: flex;
   align-items: center;
   padding: 1.1vh 0;
-  /* hora, linha e rótulo no mesmo cinza */
-  color: #9e9e9e;
+  /* título, tempo restante e faixa de horário em rosa; só a linha fica cinza */
+  color: var(--peach);
 }
 
-/* direita: quanto falta e a faixa de horário */
-.slot__right {
-  display: flex;
-  align-items: baseline;
-}
-
-.slot__falta {
-  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin-right: .3em;
-  font-size: clamp(27px, 2.4vw, 48px);
-  font-weight: 600;
-  letter-spacing: .01em;
-  white-space: nowrap;
-}
-
+/* direita: faixa de horário */
 .slot__hour {
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
@@ -200,7 +186,7 @@ body {
   flex: 1 1 0;
   min-width: 0;
   height: 1px;
-  background: #9e9e9e;
+  background: var(--peach);
   margin: 0 1vw;
 }
 
@@ -268,12 +254,6 @@ body {
   margin: 0 1.2vw;
 }
 
-/* direita: sala e horário */
-.card__meta {
-  display: flex;
-  align-items: center;
-}
-
 .card__name {
   /* encolhe com reticências em vez de empurrar a sala ou quebrar em duas
      linhas */
@@ -292,36 +272,12 @@ body {
   text-overflow: ellipsis;
 }
 
-/* ponto entre a sala e o horário */
-.card__sep {
-  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin: 0 .5vw;
-  font-size: clamp(28px, 2.4vw, 48px);
-  font-weight: 800;
-  color: #fff;
-}
 
-/* ponta direita: horário, só o texto */
-.card__hours {
-  display: flex;
-  align-items: center;
-  font-size: clamp(28px, 2.4vw, 48px);
-  font-weight: 800;
-  color: #fff;
-  /* mesmo espaçamento do relógio do cabeçalho (#clock) */
-  letter-spacing: -.03em;
-  line-height: 1.1;
-  white-space: nowrap;
-}
-
-.card__hours span { margin: 0 .18em; }
-
-
-/* sala em rosa, à esquerda do horário, no mesmo corpo dele */
+/* ponta direita: a sala; o horário do bloco já está na divisória */
 .card__room {
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
-  color: var(--peach);
+  color: #fff;
   text-transform: uppercase;
   letter-spacing: .04em;
   line-height: 1.1;
@@ -334,16 +290,14 @@ body {
 .rooms {
   flex: 0 0 auto;
   display: flex;
-  /* respiro maior em cima (separa do cabeçalho) que embaixo, onde já vem a
-     divisória dos próximos agendamentos */
-  padding: 1.6vh 0 .5vh;
-  /* janela do rodízio: os tiles que saem da tela são cortados aqui. Os 3px
-     laterais (devolvidos pela margem negativa) evitam que o corte coma o anel
-     pulsante das salas em uso encostadas nas bordas. */
+  /* respiro dos dois lados: acima separa do cabeçalho; abaixo, da divisória
+     dos próximos agendamentos */
+  padding: 1.6vh 4px 1.8vh;
+  /* janela do rodízio: os tiles que saem da tela são cortados aqui. Os 4px
+     laterais (devolvidos pela margem negativa) afastam o corte da borda dos
+     cards, que estava comendo o arredondado das pontas. */
+  margin: 0 -4px;
   overflow: hidden;
-  padding-left: 3px;
-  padding-right: 3px;
-  margin: 0 -3px;
 }
 
 /* faixa do rodízio: três salas por tela, andando de uma em uma. O passo é
@@ -355,22 +309,18 @@ body {
   flex-wrap: nowrap;
   flex: 1 1 auto;
   min-width: 0;
-  /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV.
-     A faixa ganha à direita a mesma sobra que o deslocamento do rodízio
-     (o recuo interno do tile) come — assim o último tile encosta na margem. */
-  margin: 0 calc(-.35vw - .9vw) 0 -.35vw;
+  /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin: 0 -.35vw;
   padding: 3px 0;
 }
 
 .room {
-  /* sem caixa: os tiles são separados por um traço, como as linhas da lista */
+  /* cada sala é um card branco arredondado */
   position: relative;
-  background: none;
+  background: #fff;
   border: none;
-  /* sem recuo à direita: o "agora" do último tile encosta na margem, como o
-     horário dos itens da lista. O recuo da esquerda é devolvido pelo
-     deslocamento da faixa (state.roomPad), então o primeiro também encosta. */
-  padding: 1.1vh 0 .4vh .9vw;
+  border-radius: 12px;
+  padding: 1.8vh 1.2vw;
   /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
      entre elas (uma ocupa tudo, duas ficam 50/50) */
   flex: 0 0 auto;
@@ -382,36 +332,36 @@ body {
   justify-content: flex-start;
 }
 
-/* linha de cima: sala, horário e o traço que puxa até o nome, abaixo */
+/* linha de cima: sala à esquerda e, na ponta, o ponto de "em uso agora" */
 .room__top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-bottom: .6vh;
 }
 
-/* o traço ocupa o vão entre a sala e o "Agora" */
-.room__line {
-  flex: 1 1 0;
-  min-width: 0;
-  height: 1px;
-  background: #9e9e9e;
-  margin: 0 1.2vw;
+/* estado da sala: vermelho ocupada, verde livre — vale para o ponto e para o
+   nome da sala, que andam sempre na mesma cor */
+.room__dot {
+  flex: 0 0 auto;
+  width: .5em;
+  height: .5em;
+  margin-left: 1.2vw;
+  border-radius: 50%;
+  background: #d64545;
+  font-size: clamp(26px, 2.2vw, 44px);
 }
 
-.room__hours {
-  font-size: clamp(22px, 1.9vw, 38px);
-  font-weight: 600;
-  color: #9e9e9e;
-  line-height: 1.1;
-  white-space: nowrap;
-}
+.room--free .room__dot { background: var(--green); }
+
+.room--free .room__title { color: var(--green); }
 
 .room__title {
-  /* mesmo corpo da sala nos itens de próximos agendamentos */
-  font-size: clamp(28px, 2.4vw, 48px);
+  /* menor que a sala nos itens de próximos agendamentos */
+  font-size: clamp(23px, 2vw, 40px);
   font-weight: 800;
-  color: var(--peach);
+  color: #d64545;
   text-transform: uppercase;
   letter-spacing: .04em;
   /* uma linha só: "Sala Plenus" quebrava em duas e desalinhava o tile */
@@ -421,9 +371,9 @@ body {
 
 
 .room__name {
-  font-size: clamp(32px, 3vw, 60px);
+  font-size: clamp(29px, 2.75vw, 55px);
   font-weight: 700;
-  color: #fff;
+  color: var(--bg);
   line-height: 1.2;
   letter-spacing: -.01em;
   /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */

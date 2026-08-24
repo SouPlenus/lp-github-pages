@@ -17,7 +17,6 @@ const state = {
   token: null,
   rooms: [],
   roomStep: 0,      // largura de um tile de sala, com margens (0 = não roda)
-  roomPad: 0,       // recuo interno do tile, descontado da posição da faixa
   roomCount: 0,     // quantas salas formam uma volta do rodízio
   roomIndex: 0,     // tile que está na primeira posição
   blocks: [],       // agendamentos já agrupados
@@ -66,28 +65,20 @@ function tempoRestante(falta) {
   return `${horas} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
-/** "Falta 1h32" / "Faltam 32 minutos" */
-function faltaLabel(falta) {
-  const verbo = falta === 1 || (falta >= 60 && falta < 120) ? 'Falta' : 'Faltam';
-  return `${verbo} ${tempoRestante(falta)}`;
-}
-
 /**
- * Conteúdo de uma divisória: à esquerda o título; à direita, quanto falta e a
- * faixa de horário — "Próximos agendamentos ——— Faltam 3h03 · 16:00–17:00".
+ * Conteúdo de uma divisória: à esquerda quando o bloco começa; à direita, só a
+ * faixa de horário — "Daqui a 2h04 ——— 19:00–20:00".
  */
 function slotLabel(start, now, end) {
   const faixa = `${fmtHour(start)}<span>–</span>${fmtHour(end || start + 60)}`;
   const falta = start - now;
-  const titulo = falta <= 0 ? 'Acontecendo agora' : 'Próximos agendamentos';
-  const restante = falta > 0
-    ? `<span class="slot__falta">${faltaLabel(falta)} ·</span>`
-    : '';
+  const titulo = falta <= 0
+    ? 'Acontecendo agora'
+    : `Daqui a ${tempoRestante(falta)}`;
 
   return `<span class="slot__rel">${titulo}</span>`
     + `<span class="slot__line"></span>`
-    + `<span class="slot__right">${restante}`
-    + `<span class="slot__hour">${faixa}</span></span>`;
+    + `<span class="slot__hour">${faixa}</span>`;
 }
 
 /**
@@ -139,7 +130,8 @@ async function login() {
 
 /** Nomes exibidos no painel quando diferem do cadastro da plataforma. */
 const ROOM_LABELS = {
-  'sala incompany': 'Sala Extra',
+  'sala incompany': 'Sala Vivência',
+  'sala extra': 'Sala Vivência',
 };
 
 function roomLabel(title) {
@@ -260,25 +252,25 @@ function renderRooms(now) {
   const wrap = el('#rooms');
   wrap.innerHTML = '';
 
-  // só as salas em uso agora entram na faixa; as livres ficam de fora
+  // todas as salas entram na faixa; as livres ficam apagadas
   for (const room of state.rooms) {
     const atual = state.blocks.find(
       (b) => b.room.id === room.id && now >= b.start && now < b.end);
-    if (!atual) continue;
 
     const card = document.createElement('div');
-    card.className = 'room';
+    card.className = 'room' + (atual ? '' : ' room--free');
 
-    // em cima a sala e o horário, com o traço puxando até o profissional
+    // em cima a sala e o estado, com o traço puxando até o profissional
     // embaixo; o nome fica numa faixa de uma linha só e, se não couber,
     // desliza (marquee)
     card.innerHTML = `
       <div class="room__top">
         <span class="room__title">${escapeHtml(room.title)}</span>
-        <span class="room__line"></span>
-        <span class="room__hours">agora</span>
+        <span class="room__dot"></span>
       </div>
-      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>`;
+      <div class="room__name">
+        <span>${atual ? escapeHtml(atual.name) : 'Disponível'}</span>
+      </div>`;
     wrap.appendChild(card);
   }
 
@@ -307,13 +299,6 @@ function renderRooms(now) {
   // passo do rodízio: distância entre um tile e o seguinte
   state.roomStep = wrap.children.length > 1
     ? wrap.children[1].offsetLeft - wrap.children[0].offsetLeft
-    : 0;
-
-  // recuo interno do tile: a faixa anda esse tanto a mais, para o tile que
-  // está na primeira posição encostar sempre na margem — sem ele, o texto
-  // aparecia deslocado a cada passo do rodízio
-  state.roomPad = wrap.children.length
-    ? parseFloat(getComputedStyle(wrap.children[0]).paddingLeft) || 0
     : 0;
 
   if (state.roomIndex >= state.roomCount) state.roomIndex = 0;
@@ -402,11 +387,7 @@ function renderList(now) {
     row.innerHTML = `
       <div class="card__name">${escapeHtml(b.name)}</div>
       <span class="card__line"></span>
-      <div class="card__meta">
-        <span class="card__room">${escapeHtml(b.room.title)}</span>
-        <span class="card__sep">·</span>
-        <span class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</span>
-      </div>`;
+      <span class="card__room">${escapeHtml(b.room.title)}</span>`;
     grid.appendChild(row);
   }
 
@@ -509,7 +490,7 @@ function render() {
 
 /** Posiciona a faixa de salas no tile atual, com ou sem animação. */
 function placeRooms(wrap, animar) {
-  const x = state.roomIndex * state.roomStep + state.roomPad;
+  const x = state.roomIndex * state.roomStep;
   wrap.style.transition = animar ? 'transform .7s ease' : 'none';
   wrap.style.transform = `translateX(${-x}px)`;
 }
