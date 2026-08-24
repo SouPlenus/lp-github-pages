@@ -54,18 +54,17 @@ function fmtHour(minutes) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
-/** "Acontecendo agora" / "Faltam 25 minutos" / "Faltam 2h30" */
+/** "Acontecendo agora" / "Daqui a 25 minutos" / "Daqui a 2h30" */
 function relLabel(start, now) {
   const falta = start - now;
   if (falta <= 0) return 'Acontecendo agora';
-  if (falta === 1) return 'Falta 1 minuto';
-  if (falta < 60) return `Faltam ${falta} minutos`;
+  if (falta === 1) return 'Daqui a 1 minuto';
+  if (falta < 60) return `Daqui a ${falta} minutos`;
 
   const horas = Math.floor(falta / 60);
   const minutos = falta % 60;
-  if (minutos) return `Faltam ${horas}h${pad(minutos)}`;
-  if (horas === 1) return 'Falta 1 hora';
-  return `Faltam ${horas} horas`;
+  if (minutos) return `Daqui a ${horas}h${pad(minutos)}`;
+  return `Daqui a ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
 /** Conteúdo de uma divisória: faixa de horário à esquerda, quanto falta à direita. */
@@ -247,27 +246,29 @@ function renderRooms(now) {
   const horaCheia = Math.floor(now / 60) * 60;
   el('#rooms-slot').innerHTML = slotLabel(horaCheia, now, horaCheia + 60);
 
+  // só as salas em uso agora entram na faixa; as livres ficam de fora
   for (const room of state.rooms) {
-    // só interessa quem está na sala AGORA; sem ninguém, a sala está livre
-    const blocks = state.blocks.filter((b) => b.room.id === room.id);
-    const current = blocks.find((b) => now >= b.start && now < b.end);
+    const atual = state.blocks.find(
+      (b) => b.room.id === room.id && now >= b.start && now < b.end);
+    if (!atual) continue;
 
     const card = document.createElement('div');
-    card.className = 'room' + (current ? ' room--busy' : '');
+    card.className = 'room';
 
-    // o nome fica numa faixa de uma linha só; se não couber, desliza (marquee)
-    const nome = current
-      ? `<div class="room__name"><span>${escapeHtml(current.name)}</span></div>`
-      : '<div class="room__name room__free"><span>Sala livre</span></div>';
-
-    // em cima: sala; embaixo: profissional (ou "Sala livre")
+    // em cima a sala, embaixo o profissional; o nome fica numa faixa de uma
+    // linha só e, se não couber, desliza (marquee)
     card.innerHTML = `
       <div class="room__top">
         <div class="room__title">${escapeHtml(room.title)}</div>
       </div>
-      ${nome}`;
+      <div class="room__name"><span>${escapeHtml(atual.name)}</span></div>`;
     wrap.appendChild(card);
   }
+
+  // sem ninguém em sala, a faixa e a divisória dela saem da tela
+  const vazia = !wrap.children.length;
+  el('.rooms').hidden = vazia;
+  el('#rooms-slot').hidden = vazia;
 
   // cópia da faixa: quando o rodízio chega ao fim da volta, o que está na
   // tela são as cópias — aí a faixa volta ao começo sem ninguém perceber
@@ -371,8 +372,11 @@ function renderList(now) {
     row.className = `card card--${status} card--${b.kind}`;
     row.innerHTML = `
       <div class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</div>
-      <div class="card__name">${escapeHtml(b.name)}</div>
-      <div class="card__room">${escapeHtml(b.room.title)}</div>`;
+      <div class="card__right">
+        <span class="card__name">${escapeHtml(b.name)}</span>
+        <span class="card__dot">·</span>
+        <span class="card__room">${escapeHtml(b.room.title)}</span>
+      </div>`;
     grid.appendChild(row);
   }
 

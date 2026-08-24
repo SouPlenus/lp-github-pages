@@ -175,7 +175,7 @@ body {
 .slot__rel {
   display: flex;
   align-items: center;
-  font-size: clamp(18px, 1.6vw, 32px);
+  font-size: clamp(27px, 2.4vw, 48px);
   font-weight: 600;
   letter-spacing: .01em;
   line-height: 1.1;
@@ -186,6 +186,10 @@ body {
 /* `flex: 0 0 auto` é obrigatório: como item do .main, a divisória das salas
    era espremida a poucos pixels pela lista, que pede toda a altura. */
 .main > .slot { flex: 0 0 auto; }
+
+/* nenhuma sala em uso: a faixa e a divisória dela saem da tela */
+.slot[hidden],
+.rooms[hidden] { display: none; }
 
 /* Presa no topo, a divisória ganha um respiro extra embaixo: uma faixa da cor
    do fundo, desenhada por fora da caixa (não muda a altura nem empurra o
@@ -222,12 +226,11 @@ body {
 }
 
 .card {
-  /* colunas laterais de largura idêntica (1fr): o nome fica exatamente no
-     centro do card, não importa o tamanho das badges de horário e sala.
-     A coluna do meio tem mínimo 0 para o nome poder encolher (…) em vez de
-     empurrar as badges ou quebrar em duas linhas. */
+  /* horário na esquerda; nome e sala juntos na direita. A segunda coluna tem
+     mínimo 0 para o nome poder encolher (…) em vez de empurrar a sala ou
+     quebrar em duas linhas. */
   display: grid;
-  grid-template-columns: minmax(auto, 1fr) minmax(0, 2fr) minmax(auto, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 1vw;
   padding: 1.7vh 1.2vw;
@@ -250,10 +253,25 @@ body {
   50%      { box-shadow: 0 0 0 3px rgba(255, 187, 170, .1); }
 }
 
-/* centro: profissional */
+/* direita: profissional · sala */
+.card__right {
+  justify-self: end;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+}
+
+.card__dot {
+  margin: 0 .35em;
+  font-size: clamp(28px, 2.4vw, 48px);
+  font-weight: 800;
+  color: var(--bg);
+}
+
 .card__name {
   min-width: 0;
-  text-align: center;
+  text-align: right;
   /* maior que o horário e a sala: é a informação que se lê de longe */
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
@@ -283,9 +301,8 @@ body {
 .card__hours span { margin: 0 .18em; }
 
 
-/* direita: sala, só o texto */
+/* sala, logo depois do nome */
 .card__room {
-  justify-self: end;
   font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
   color: var(--bg);
@@ -333,8 +350,8 @@ body {
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 1.1vh .9vw;
-  /* três por tela, ocupando a faixa inteira: largura útil (100vw menos o
-     recuo do .app, mais a margem negativa do #rooms) dividida por três, já
+  /* três por tela, alinhados com os cards da lista: largura útil (100vw menos
+     o recuo do .app, mais a margem negativa do #rooms) dividida por três, já
      descontadas as margens laterais de cada tile */
   flex: 0 0 auto;
   width: calc((100vw - 4.5vw) / 3 - .7vw);
@@ -347,16 +364,6 @@ body {
 
 /* margem no lugar de `gap`: mesmo motivo do #rooms */
 .room__top { margin-bottom: .6vh; }
-
-.room--busy {
-  border-color: var(--peach);
-  animation: live-ring-flat 2.6s ease-in-out infinite;
-}
-
-@keyframes live-ring-flat {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(255, 187, 170, .5); }
-  50%      { box-shadow: 0 0 0 3px rgba(255, 187, 170, .1); }
-}
 
 /* linha de cima: nome da sala + ponto no canto superior direito */
 .room__top {
@@ -399,12 +406,6 @@ body {
   50%, 60%  { transform: translateX(var(--shift)); }
   100%      { transform: translateX(0); }
 }
-
-.room__free { font-weight: 700; }
-
-/* sala livre: rótulo e texto mais apagados que os tiles ocupados */
-.room:not(.room--busy) .room__title,
-.room:not(.room--busy) .room__name { opacity: .45; }
 
 /* ---------------------------------------------------------------- vazio */
 
