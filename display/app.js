@@ -17,6 +17,8 @@ const state = {
   token: null,
   rooms: [],
   blocks: [],       // agendamentos já agrupados
+  groups: [],       // { top, start, end, sep } de cada bloco de horário
+  sepHeight: 40,    // altura da divisória presa no topo da lista
   lastUpdate: null,
   error: null,
 };
@@ -47,6 +49,30 @@ function toMinutes(hhmm) {
 
 function fmtHour(minutes) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
+}
+
+/** "Acontecendo agora" / "Faltam 25 minutos" / "Faltam 2h30" */
+function relLabel(start, now) {
+  const falta = start - now;
+  if (falta <= 0) return 'Acontecendo agora';
+  if (falta === 1) return 'Falta 1 minuto';
+  if (falta < 60) return `Faltam ${falta} minutos`;
+
+  const horas = Math.floor(falta / 60);
+  const minutos = falta % 60;
+  if (minutos) return `Faltam ${horas}h${pad(minutos)}`;
+  if (horas === 1) return 'Falta 1 hora';
+  return `Faltam ${horas} horas`;
+}
+
+/** Conteúdo de uma divisória: faixa de horário à esquerda, quanto falta à direita. */
+function slotLabel(start, now, end) {
+  const aoVivo = start <= now;
+  const faixa = `${fmtHour(start)}<span>–</span>${fmtHour(end || start + 60)}`;
+  return `<span class="slot__hour">${faixa}</span>`
+    + `<span class="slot__line"></span>`
+    + `<span class="slot__rel${aoVivo ? ' slot__rel--live' : ''}">`
+    + `${relLabel(start, now)}</span>`;
 }
 
 /**
@@ -216,6 +242,10 @@ function renderRooms(now) {
   const wrap = el('#rooms');
   wrap.innerHTML = '';
 
+  // divisória com a hora corrente, no mesmo estilo das da lista
+  const horaCheia = Math.floor(now / 60) * 60;
+  el('#rooms-slot').innerHTML = slotLabel(horaCheia, now, horaCheia + 60);
+
   for (const room of state.rooms) {
     // só interessa quem está na sala AGORA; sem ninguém, a sala está livre
     const blocks = state.blocks.filter((b) => b.room.id === room.id);
@@ -263,14 +293,21 @@ function renderList(now) {
   const keepScroll = list.scrollTop;   // não interrompe a rolagem automática
   list.innerHTML = '';
 
-  // o dia inteiro: os já encerrados ficam esmaecidos (.card--past)
-  const doDia = state.blocks;
+  // a lista mostra o que ainda vai começar: o horário em andamento já aparece
+  // na faixa de salas, logo abaixo do cabeçalho
+  const doDia = state.blocks.filter((b) => b.start > now);
 
   if (!doDia.length) {
+    const encerrado = state.blocks.length > 0;
     list.innerHTML = `<div class="empty">
-        <div class="empty__title">Nenhum agendamento para hoje</div>
-        <div class="empty__sub">As salas estão livres o dia todo.</div>
+        <div class="empty__title">${encerrado
+          ? 'Nenhum agendamento a seguir'
+          : 'Nenhum agendamento para hoje'}</div>
+        <div class="empty__sub">${encerrado
+          ? 'Não há mais horários marcados para hoje.'
+          : 'As salas estão livres o dia todo.'}</div>
       </div>`;
+    state.groups = [];
     return;
   }
 
@@ -278,7 +315,8 @@ function renderList(now) {
   const track = document.createElement('div');
   track.className = 'loop';
 
-  // agrupa por horário de início: cada grupo é uma coluna de cards
+  // agrupa por horário de início: cada grupo tem o separador (fixo no topo
+  // enquanto rola) e os cards daquele horário
   let lastStart = null;
   let grid = null;
 
@@ -286,14 +324,24 @@ function renderList(now) {
     const status = statusOf(b, now);
 
     if (b.start !== lastStart) {
+      const group = document.createElement('div');
+      group.className = 'slot-group';
+      group.setAttribute('data-start', String(b.start));
+      // fim do bloco: o maior fim entre os cards que começam neste horário
+      const fim = doDia.reduce(
+        (max, o) => (o.start === b.start && o.end > max ? o.end : max), b.end);
+      group.setAttribute('data-end', String(fim));
+      track.appendChild(group);
+
+      // divisória que rola junto com os cards do bloco
       const sep = document.createElement('div');
-      sep.className = 'slot' + (status === 'past' ? ' slot--past' : '');
-      sep.textContent = fmtHour(b.start);
-      track.appendChild(sep);
+      sep.className = 'slot';
+      sep.innerHTML = slotLabel(b.start, now, fim);
+      group.appendChild(sep);
 
       grid = document.createElement('div');
       grid.className = 'grid';
-      track.appendChild(grid);
+      group.appendChild(grid);
 
       lastStart = b.start;
     }
@@ -319,6 +367,63 @@ function renderList(now) {
   }
 
   list.scrollTop = Math.min(keepScroll, Math.max(0, list.scrollHeight - list.clientHeight));
+
+  indexGroups(list);
+  pinSlots();
+}
+
+/**
+ * Posição de cada bloco de horário dentro da rolagem, em coordenadas de
+ * conteúdo (o primeiro bloco é o zero), junto com a sua divisória.
+ * Recalculado a cada render.
+ */
+function indexGroups(list) {
+  const groups = [].slice.call(list.querySelectorAll('.slot-group'));
+  const base = groups.length ? groups[0].offsetTop : 0;
+  state.groups = groups.map((g) => ({
+    top: g.offsetTop - base,
+    start: Number(g.getAttribute('data-start')),
+    end: Number(g.getAttribute('data-end')),
+    sep: g.querySelector('.slot'),
+    desloc: 0,
+    presa: false,
+  }));
+
+  const sep = list.querySelector('.slot-group .slot');
+  state.sepHeight = (sep && sep.offsetHeight) || 40;
+}
+
+/**
+ * Prende no topo da lista a divisória do bloco que está passando e deixa a
+ * divisória do bloco seguinte empurrá-la para fora — o mesmo efeito do
+ * `position: sticky`, feito com `top` em elemento `position: relative`, que
+ * qualquer Chrome antigo entende.
+ */
+function pinSlots() {
+  const scroll = el('#list').scrollTop;
+  const h = state.sepHeight;
+
+  for (let i = 0; i < state.groups.length; i++) {
+    const g = state.groups[i];
+    const proxima = state.groups[i + 1];
+
+    // enquanto o bloco passa, a divisória acompanha a rolagem (fica no topo);
+    // quando a próxima chega, ela para de acompanhar e é empurrada para cima
+    const limite = proxima ? proxima.top - h - g.top : Infinity;
+    const desloc = Math.max(0, Math.min(scroll - g.top, limite));
+
+    if (desloc !== g.desloc) {
+      g.sep.style.top = desloc ? `${desloc}px` : '';
+      g.desloc = desloc;
+
+      // a faixa extra embaixo só existe enquanto a divisória está presa
+      const presa = desloc > 0;
+      if (presa !== g.presa) {
+        g.sep.className = presa ? 'slot slot--pinned' : 'slot';
+        g.presa = presa;
+      }
+    }
+  }
 }
 
 function escapeHtml(s) {
@@ -367,6 +472,8 @@ function startAutoScroll() {
     let next = list.scrollTop + 1.2;
     if (next >= loopH) next -= loopH;   // emenda: o topo da cópia vira o novo topo
     list.scrollTop = next;
+
+    pinSlots();
   }, 40);
 }
 
