@@ -20,10 +20,9 @@
 
   /* fundo do painel: preto sólido (cabeçalho, lista e faixa de salas) */
   --bg: #000;
-  /* estado das salas: tons fechados, para contorno e texto lerem na faixa
-     branca atrás dos cards */
-  --livre: #2b695b;
-  --ocupada: #d64545;
+  /* estado das salas: tons claros, para lerem sobre o preto */
+  --livre: #2fd97b;
+  --ocupada: #ff6b6b;
 
   /* superfícies sobre o verde */
   --surface: rgba(255, 255, 255, .07);
@@ -191,6 +190,7 @@ body {
   min-width: 0;
   height: 3px;
   background: var(--peach);
+  opacity: .5;
   margin: 0 1vw;
 }
 
@@ -208,16 +208,17 @@ body {
 /* nenhuma sala em uso: a faixa sai da tela */
 .rooms[hidden] { display: none; }
 
-/* Presa no topo, a divisória ganha um respiro extra embaixo: uma faixa da cor
-   do fundo, desenhada por fora da caixa (não muda a altura nem empurra o
-   conteúdo), que faz os cards sumirem um pouco antes de encostar nela. */
+/* Presa no topo, a divisória ganha um respiro embaixo: uma faixa da cor do
+   fundo, desenhada por fora da caixa (não muda a altura nem empurra o
+   conteúdo), que faz os itens sumirem um pouco antes de encostar nela.
+   Baixa de propósito: mais que isso encobria o traço do primeiro item. */
 .slot--pinned::after {
   content: '';
   position: absolute;
   left: 0;
   right: 0;
   top: 100%;
-  height: 1.6vh;
+  height: .5vh;
   background: var(--bg);
 }
 
@@ -256,6 +257,7 @@ body {
   min-width: 0;
   height: 3px;
   background: #fff;
+  opacity: .5;
   margin: 0 1.2vw;
 }
 
@@ -297,11 +299,9 @@ body {
   display: flex;
   /* respiro dos dois lados: acima separa do cabeçalho; abaixo, da divisória
      dos próximos agendamentos */
-  padding: 1.6vh 4px 1.8vh;
-  /* janela do rodízio: os tiles que saem da tela são cortados aqui. Os 4px
-     laterais (devolvidos pela margem negativa) afastam o corte da borda dos
-     cards, que estava comendo o arredondado das pontas. */
-  margin: 0 -4px;
+  padding: 1.6vh 0 1.8vh;
+  /* janela do rodízio: corta exatamente nas margens do painel. Não precisa de
+     folga: o que encosta na borda esquerda é o traço da sala, não o texto. */
   overflow: hidden;
 }
 
@@ -314,37 +314,49 @@ body {
   flex-wrap: nowrap;
   flex: 1 1 auto;
   min-width: 0;
-  /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin: 0 -.35vw;
   padding: 3px 0;
 }
 
 .room {
-  /* cada sala é um card branco, com o contorno na cor do estado */
+  /* sem caixa: cada sala é aberta por um traço vertical na sua borda
+     esquerda — inclusive a primeira, que fica alinhada com a margem do
+     painel. O recuo à esquerda é o respiro entre o traço e o texto. */
   position: relative;
-  background: #fff;
-  border: 3px solid var(--ocupada);
-  border-radius: 14px;
-  padding: 1.8vh 1.2vw;
+  background: none;
+  border: none;
+  padding: 1.8vh 0 1.8vh 1.2vw;
   /* no máximo três por tela; com menos salas em uso, o JS divide a faixa
      entre elas (uma ocupa tudo, duas ficam 50/50) */
   flex: 0 0 auto;
-  width: calc(100% / 3 - .7vw);
-  margin: 0 .35vw;
+  width: calc(100% / 3);
   display: flex;
   flex-direction: column;
   /* sala e horário em cima, profissional embaixo */
   justify-content: flex-start;
 }
 
-/* linha de cima: sala à esquerda e, na ponta, o ponto de "em uso agora" */
+/* linha de cima: sala e, logo ao lado, o ponto de estado */
 .room__top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-bottom: .6vh;
 }
+
+/* traço vertical na abertura de cada sala: cobre só a altura do texto (o
+   recuo do card fica de fora) e usa a cor do estado daquela sala */
+.room::before {
+  content: '';
+  position: absolute;
+  top: 1.8vh;
+  bottom: 1.8vh;
+  left: 0;
+  width: 3px;
+  background: var(--ocupada);
+}
+
+.room--free::before { background: var(--livre); }
 
 /* estado da sala: vermelho ocupada, verde livre — vale para o ponto e para o
    nome da sala, que andam sempre na mesma cor */
@@ -352,14 +364,10 @@ body {
   flex: 0 0 auto;
   width: .5em;
   height: .5em;
-  margin-left: 1.2vw;
+  margin-right: .4em;
   border-radius: 50%;
   background: var(--ocupada);
   font-size: clamp(26px, 2.2vw, 44px);
-}
-
-.room--free {
-  border-color: var(--livre);
 }
 
 .room--free .room__dot { background: var(--livre); }
@@ -380,9 +388,9 @@ body {
 
 
 .room__name {
-  font-size: clamp(29px, 2.75vw, 55px);
+  font-size: clamp(26px, 2.45vw, 49px);
   font-weight: 700;
-  color: var(--bg);
+  color: #fff;
   line-height: 1.2;
   letter-spacing: -.01em;
   /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */

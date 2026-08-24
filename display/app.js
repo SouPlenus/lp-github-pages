@@ -265,8 +265,8 @@ function renderRooms(now) {
     // desliza (marquee)
     card.innerHTML = `
       <div class="room__top">
-        <span class="room__title">${escapeHtml(room.title)}</span>
         <span class="room__dot"></span>
+        <span class="room__title">${escapeHtml(room.title)}</span>
       </div>
       <div class="room__name">
         <span>${atual ? escapeHtml(atual.name) : 'Disponível agora'}</span>
@@ -278,7 +278,7 @@ function renderRooms(now) {
   // ocupa tudo, duas ficam 50/50, três ou mais entram no rodízio horizontal
   const colunas = Math.min(wrap.children.length, 3) || 1;
   for (const tile of [].slice.call(wrap.children)) {
-    tile.style.width = `calc(${(100 / colunas).toFixed(4)}% - .7vw)`;
+    tile.style.width = `${(100 / colunas).toFixed(4)}%`;
   }
 
   // sem ninguém em sala, a faixa sai da tela
