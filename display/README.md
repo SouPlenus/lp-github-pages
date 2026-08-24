@@ -29,22 +29,34 @@ Ajustes não sensíveis ficam em [config.js](config.js) (`refreshMs`, `autoScrol
 `apiBaseUrl`, `useMock`). **Credenciais não ficam no repositório** — o arquivo é
 público no GitHub Pages.
 
-O acesso é resolvido em tempo de execução, nesta ordem:
+Na primeira vez que a TV abrir o painel, aparece uma **tela de login** (e-mail e
+senha). O que for informado ali fica salvo no `localStorage` daquele navegador —
+das próximas vezes o painel entra direto.
+
+O acesso é resolvido nesta ordem:
 
 1. `config.local.js` (fora do Git) — para rodar em rede interna. Copie de
    [config.local.example.js](config.local.example.js) e preencha.
-2. `localStorage` do próprio dispositivo.
-3. Parâmetros na URL, usados **uma única vez** para configurar a TV:
+2. `localStorage` do próprio dispositivo (preenchido pela tela de login).
+3. Parâmetros na URL, se preferir configurar sem digitar na TV:
 
 ```
+https://lp.souplenus.com.br/display/?email=painel@souplenus.com.br&password=…
 https://lp.souplenus.com.br/display/?token=SEU_TOKEN
 ```
 
-O token é gravado no `localStorage` daquele navegador e removido da barra de
-endereço (`history.replaceState`), para não ficar visível na tela nem no
-histórico. Da segunda vez em diante basta abrir a URL limpa.
+O que vier pela URL é gravado no `localStorage` e removido da barra de endereço
+(`history.replaceState`), para não ficar visível na tela nem no histórico.
 
-Para obter um token:
+São as **credenciais** (não o token) que ficam guardadas: assim o painel renova a
+sessão sozinho quando o token expira, sem ninguém precisar voltar na TV. Para
+trocar de usuário, limpe os dados do site no navegador ou rode no console:
+
+```js
+window.DISPLAY_AUTH.clear(); location.reload();
+```
+
+Para gerar um token fixo, se preferir essa via:
 
 ```bash
 curl -s -X POST https://prod-api.souplenus.com.br/api/login \

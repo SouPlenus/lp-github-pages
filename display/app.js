@@ -391,8 +391,62 @@ async function refresh() {
   render();
 }
 
-async function main() {
-  render();
+/* ------------------------------------------------------------------ login */
+
+function hasCredentials() {
+  return !!(CFG.apiToken || (CFG.email && CFG.password));
+}
+
+/** Valida e-mail/senha na API e guarda no dispositivo. */
+async function signIn(email, password) {
+  const res = await fetch(CFG.apiBaseUrl + '/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  if (res.status === 401 || res.status === 422) throw new Error('E-mail ou senha inválidos.');
+  if (!res.ok) throw new Error(`Falha no login (${res.status}).`);
+
+  const json = await res.json();
+  const token = json && json.data && json.data.api_token;
+  if (!token) throw new Error('Login sem api_token na resposta.');
+
+  // guarda as credenciais (e não o token): assim o painel renova sozinho a
+  // sessão quando o token expirar, sem ninguém precisar voltar na TV
+  window.DISPLAY_AUTH.save({ email, password, apiToken: '' });
+  state.token = token;
+}
+
+function setupLogin() {
+  const box = el('#login');
+  const form = el('#login-form');
+  const erro = el('#login-error');
+  const botao = el('#login-submit');
+
+  box.hidden = false;
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    erro.hidden = true;
+    botao.disabled = true;
+    botao.textContent = 'Entrando…';
+
+    try {
+      await signIn(el('#login-email').value.trim(), el('#login-password').value);
+      box.hidden = true;
+      await start();
+    } catch (err) {
+      erro.textContent = err.message;
+      erro.hidden = false;
+      botao.disabled = false;
+      botao.textContent = 'Entrar';
+    }
+  });
+}
+
+/* ------------------------------------------------------------------- boot */
+
+async function start() {
   await refresh();
   setInterval(refresh, CFG.refreshMs);
   setInterval(render, 30000);   // reavalia "em andamento" e o relógio
@@ -406,6 +460,17 @@ async function main() {
       refresh();
     }
   }, 60000);
+}
+
+async function main() {
+  render();
+  setInterval(renderClock, 30000);   // relógio anda mesmo na tela de login
+
+  if (!USE_MOCK && !hasCredentials()) {
+    setupLogin();
+    return;
+  }
+  await start();
 }
 
 main();

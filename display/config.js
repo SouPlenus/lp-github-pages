@@ -43,6 +43,24 @@
 
   const local = window.DISPLAY_SECRETS || {};
 
+  /** Guarda/limpa as credenciais deste dispositivo (usado pela tela de login). */
+  window.DISPLAY_AUTH = {
+    save(creds) {
+      saved = Object.assign(saved, creds);
+      try {
+        localStorage.setItem(AUTH_KEY, JSON.stringify(saved));
+      } catch (err) { /* modo anônimo: vale só para esta sessão */ }
+      Object.assign(window.DISPLAY_CONFIG, creds);
+    },
+    clear() {
+      saved = {};
+      try {
+        localStorage.removeItem(AUTH_KEY);
+      } catch (err) { /* nada a limpar */ }
+      Object.assign(window.DISPLAY_CONFIG, { apiToken: '', email: '', password: '' });
+    },
+  };
+
   window.DISPLAY_CONFIG = {
     // true = usa os dados de exemplo em mock.js, sem nenhuma chamada de rede.
     // Também dá para ligar pontualmente com ?mock=1 na URL.
