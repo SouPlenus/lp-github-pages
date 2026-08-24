@@ -74,6 +74,8 @@ body {
   /* ícone, relógio e data à esquerda; a faixa de salas ocupa o que sobra */
   display: flex;
   align-items: center;
+  /* respiro até a primeira divisória da lista */
+  padding-bottom: 2.4vh;
 }
 
 /* altura casada com a dos dígitos do relógio (menor que o corpo da fonte) */
@@ -187,12 +189,11 @@ body {
 
 .slot__hour span { margin: 0 .18em; }
 
-/* a linha ocupa o vão entre o título e a faixa de horário, na mesma
-   espessura do contorno dos cards de sala */
+/* a linha ocupa o vão entre o título e a faixa de horário */
 .slot__line {
   flex: 1 1 0;
   min-width: 0;
-  height: 3px;
+  height: 1px;
   background: var(--peach);
   opacity: .5;
   margin: 0 1vw;
@@ -253,12 +254,11 @@ body {
   padding: 1.7vh 0;
 }
 
-/* o traço ocupa o vão entre o nome e a sala, na mesma espessura do contorno
-   dos cards de sala */
+/* o traço ocupa o vão entre o nome e a sala */
 .card__line {
   flex: 1 1 0;
   min-width: 0;
-  height: 3px;
+  height: 1px;
   background: #fff;
   opacity: .5;
   margin: 0 1.2vw;
@@ -329,6 +329,8 @@ body {
   position: relative;
   background: none;
   border: none;
+  /* sem recuo à direita: o texto da última sala encosta na margem do painel;
+     o vão entre uma sala e a seguinte vem do recuo à esquerda */
   padding: .6vh 0 .6vh 1vw;
   /* no máximo duas por tela; com uma sala só, ela ocupa a faixa inteira (a
      largura final vem do JS, pela quantidade) */
@@ -344,24 +346,10 @@ body {
 .room__top {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: flex-end;
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-bottom: .6vh;
 }
-
-/* traço vertical na abertura de cada sala: cobre só a altura do texto (o
-   recuo do card fica de fora) e usa a cor do estado daquela sala */
-.room::before {
-  content: '';
-  position: absolute;
-  top: .6vh;
-  bottom: .6vh;
-  left: 0;
-  width: 3px;
-  background: var(--ocupada);
-}
-
-.room--free::before { background: var(--livre); }
 
 /* estado da sala: vermelho ocupada, verde livre — vale para o ponto e para o
    nome da sala, que andam sempre na mesma cor */
@@ -369,7 +357,7 @@ body {
   flex: 0 0 auto;
   width: .5em;
   height: .5em;
-  margin-left: .4em;
+  margin-right: .4em;
   border-radius: 50%;
   background: var(--ocupada);
   font-size: clamp(26px, 2.2vw, 44px);
@@ -380,7 +368,7 @@ body {
 .room--free .room__title { color: var(--livre); }
 
 .room__title {
-  font-size: clamp(20px, 1.75vw, 35px);
+  font-size: clamp(28px, 2.25vw, 45px);
   font-weight: 800;
   color: var(--ocupada);
   text-transform: uppercase;
@@ -397,6 +385,7 @@ body {
   color: #fff;
   line-height: 1.2;
   letter-spacing: -.01em;
+  text-align: right;
   /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */
   white-space: nowrap;
   overflow: hidden;

@@ -267,8 +267,8 @@ function renderRooms(now) {
     // desliza (marquee)
     card.innerHTML = `
       <div class="room__top">
-        <span class="room__title">${escapeHtml(room.title)}</span>
         <span class="room__dot"></span>
+        <span class="room__title">${escapeHtml(room.title)}</span>
       </div>
       <div class="room__name">
         <span>${atual ? escapeHtml(atual.name) : 'Disponível agora'}</span>
