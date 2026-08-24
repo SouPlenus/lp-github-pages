@@ -16,6 +16,9 @@ const USE_MOCK = CFG.useMock || new URLSearchParams(location.search).get('mock')
 const state = {
   token: null,
   rooms: [],
+  roomStep: 0,      // largura de um tile de sala, com margens (0 = não roda)
+  roomCount: 0,     // quantas salas formam uma volta do rodízio
+  roomIndex: 0,     // tile que está na primeira posição
   blocks: [],       // agendamentos já agrupados
   groups: [],       // { top, start, end, sep } de cada bloco de horário
   sepHeight: 40,    // altura da divisória presa no topo da lista
@@ -268,6 +271,26 @@ function renderRooms(now) {
     wrap.appendChild(card);
   }
 
+  // cópia da faixa: quando o rodízio chega ao fim da volta, o que está na
+  // tela são as cópias — aí a faixa volta ao começo sem ninguém perceber
+  const cabe = wrap.scrollWidth <= wrap.clientWidth;
+  state.roomCount = cabe ? 0 : wrap.children.length;
+  if (!cabe) {
+    const copia = [].slice.call(wrap.children).map((n) => n.cloneNode(true));
+    for (const n of copia) {
+      n.setAttribute('aria-hidden', 'true');
+      wrap.appendChild(n);
+    }
+  }
+
+  // passo do rodízio: distância entre um tile e o seguinte
+  state.roomStep = wrap.children.length > 1
+    ? wrap.children[1].offsetLeft - wrap.children[0].offsetLeft
+    : 0;
+
+  if (state.roomIndex >= state.roomCount) state.roomIndex = 0;
+  placeRooms(wrap, false);
+
   markOverflowingNames(wrap);
 }
 
@@ -454,6 +477,36 @@ function render() {
 
 /* -------------------------------------------------------- auto-scroll TV */
 
+/** Posiciona a faixa de salas no tile atual, com ou sem animação. */
+function placeRooms(wrap, animar) {
+  wrap.style.transition = animar ? 'transform .7s ease' : 'none';
+  wrap.style.transform = `translateX(${-state.roomIndex * state.roomStep}px)`;
+}
+
+/**
+ * Rodízio das salas: anda um tile de cada vez e, ao completar a volta, volta
+ * ao começo sem animação — como o que está na tela são as cópias dos mesmos
+ * tiles, o salto não aparece.
+ */
+function startRoomsScroll() {
+  if (!CFG.autoScroll) return;
+  const wrap = el('#rooms');
+
+  setInterval(() => {
+    if (!state.roomCount || !state.roomStep) return;
+
+    state.roomIndex += 1;
+    placeRooms(wrap, true);
+
+    if (state.roomIndex >= state.roomCount) {
+      setTimeout(() => {
+        state.roomIndex = 0;
+        placeRooms(wrap, false);
+      }, 800);
+    }
+  }, 4000);
+}
+
 function startAutoScroll() {
   if (!CFG.autoScroll) return;
   const list = el('#list');
@@ -558,6 +611,7 @@ async function start() {
   setInterval(refresh, CFG.refreshMs);
   setInterval(render, 30000);   // reavalia "em andamento" e o relógio
   startAutoScroll();
+  startRoomsScroll();
 
   // vira o dia à meia-noite
   let currentDay = todayISO();

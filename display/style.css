@@ -85,7 +85,7 @@ body {
 
 #clock {
   justify-self: start;
-  font-size: clamp(30px, 3.4vw, 62px);
+  font-size: clamp(60px, 6.8vw, 124px);
   font-weight: 700;
   color: #fff;
   line-height: 1;
@@ -94,7 +94,7 @@ body {
 }
 
 #date {
-  font-size: clamp(16px, 1.55vw, 30px);
+  font-size: clamp(32px, 3.1vw, 60px);
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
@@ -103,7 +103,7 @@ body {
 #date::first-letter { text-transform: uppercase; }
 
 .status {
-  font-size: clamp(11px, .9vw, 16px);
+  font-size: clamp(22px, 1.8vw, 32px);
   color: var(--muted);
   font-weight: 500;
   margin-top: .4vh;
@@ -154,7 +154,7 @@ body {
 
 /* esquerda: horário */
 .slot__hour {
-  font-size: clamp(16px, 1.5vw, 30px);
+  font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
   letter-spacing: -.03em;
   line-height: 1.1;
@@ -175,7 +175,7 @@ body {
 .slot__rel {
   display: flex;
   align-items: center;
-  font-size: clamp(14px, 1.25vw, 25px);
+  font-size: clamp(28px, 2.5vw, 50px);
   font-weight: 600;
   letter-spacing: .01em;
   line-height: 1.1;
@@ -263,7 +263,7 @@ body {
   min-width: 0;
   text-align: center;
   /* maior que o horário e a sala: é a informação que se lê de longe */
-  font-size: clamp(16px, 1.5vw, 30px);
+  font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
   color: var(--bg);
   line-height: 1.15;
@@ -279,7 +279,7 @@ body {
   justify-self: start;
   display: flex;
   align-items: center;
-  font-size: clamp(14px, 1.2vw, 24px);
+  font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
   color: #fff;
   background: var(--bg);
@@ -297,7 +297,7 @@ body {
 /* direita: sala em caixa de destaque */
 .card__room {
   justify-self: end;
-  font-size: clamp(14px, 1.2vw, 24px);
+  font-size: clamp(28px, 2.4vw, 48px);
   font-weight: 800;
   color: #fff;
   text-transform: uppercase;
@@ -318,17 +318,28 @@ body {
   /* respiro entre o cabeçalho e a faixa de salas, mais o espaço do anel
      pulsante em cima e embaixo */
   padding: 1.6vh 0;
+  /* janela do rodízio: os tiles que saem da tela são cortados aqui. Os 3px
+     laterais (devolvidos pela margem negativa) evitam que o corte coma o anel
+     pulsante das salas em uso encostadas nas bordas. */
+  overflow: hidden;
+  padding-left: 3px;
+  padding-right: 3px;
+  margin: 0 -3px;
 }
 
+/* faixa do rodízio: três salas por tela, andando de uma em uma. O passo é
+   um translate com transição — sem rolagem contínua, para o nome ficar
+   parado e legível entre um passo e outro. */
 #rooms {
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap;
   flex: 1 1 auto;
   min-width: 0;
-  /* visible: o anel da sala em uso não pode ser cortado em cima/embaixo */
-  overflow: visible;
   /* margens no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin: 0 -.35vw;
+  /* espaço em cima e embaixo para o anel da sala em uso não ser cortado */
+  padding: 3px 0;
 }
 
 .room {
@@ -336,8 +347,11 @@ body {
   border: 1px solid transparent;
   border-radius: 8px;
   padding: 1.1vh .9vw;
-  flex: 1 1 0;
-  min-width: 0;
+  /* três por tela, ocupando a faixa inteira: largura útil (100vw menos o
+     recuo do .app, mais a margem negativa do #rooms) dividida por três, já
+     descontadas as margens laterais de cada tile */
+  flex: 0 0 auto;
+  width: calc((100vw - 4.5vw) / 3 - .7vw);
   margin: 0 .35vw;
   display: flex;
   flex-direction: column;
@@ -367,7 +381,7 @@ body {
 }
 
 .room__title {
-  font-size: clamp(11px, .95vw, 18px);
+  font-size: clamp(22px, 1.9vw, 36px);
   font-weight: 700;
   color: var(--bg);
   text-transform: uppercase;
@@ -378,7 +392,7 @@ body {
 
 
 .room__name {
-  font-size: clamp(14px, 1.25vw, 25px);
+  font-size: clamp(28px, 2.5vw, 50px);
   font-weight: 700;
   color: var(--bg);
   line-height: 1.2;
@@ -414,22 +428,22 @@ body {
 }
 
 .empty__title {
-  font-size: clamp(20px, 2vw, 38px);
+  font-size: clamp(40px, 4vw, 76px);
   font-weight: 600;
   color: #fff;
   letter-spacing: -.02em;
 }
 
 .empty__sub {
-  font-size: clamp(12px, 1vw, 19px);
+  font-size: clamp(24px, 2vw, 38px);
   color: var(--muted);
   margin-top: 1.2vh;
 }
 
 /* telas menores / portrait */
 @media (max-width: 900px) {
-  #rooms { flex-wrap: wrap; }
-  .room { margin-bottom: .7vh; }
+  /* telas estreitas: duas por tela, o rodízio segue igual */
+  .room { width: calc((100vw - 4.5vw) / 2 - .7vw); }
 }
 
 /* ---------------------------------------------------------------- login */
