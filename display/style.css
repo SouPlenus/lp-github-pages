@@ -71,29 +71,31 @@ body {
 }
 
 .header {
-  /* ícone, relógio e data à esquerda; a faixa de salas ocupa o que sobra */
+  /* ícone à esquerda, relógio e data à direita; as salas ocupam o meio */
   display: flex;
   align-items: center;
   /* respiro até a primeira divisória da lista */
   padding-bottom: 2.4vh;
 }
 
-/* altura casada com a dos dígitos do relógio (menor que o corpo da fonte) */
+/* mesma altura das duas linhas do card de sala (nome da sala + profissional) */
 .logo {
-  height: clamp(30px, 3.2vw, 60px);
+  height: clamp(56px, 5.9vw, 110px);
   width: auto;
   display: block;
-  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
-  margin-right: .6vw;
 }
 
 /* o cabeçalho não pode espremer o relógio nem a data: quem cede espaço para
    a faixa de salas é a própria faixa */
-#clock,
-#date,
+.header__right,
 .logo { flex: 0 0 auto; }
 
-#date { margin: 0 2.4vw 0 1.2vw; }
+.header__right {
+  display: flex;
+  align-items: center;
+}
+
+#date { margin-right: 1.2vw; }
 
 #clock {
   font-size: clamp(40px, 4.4vw, 82px);
@@ -107,7 +109,7 @@ body {
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
-  text-align: left;
+  text-align: right;
 }
 
 /* as duas linhas somam 4.4vw, exatamente a altura do #clock ao lado */
@@ -298,9 +300,11 @@ body {
 /* --------------------------------------------------------- coluna salas */
 
 .rooms {
-  /* ocupa o espaço que sobra no cabeçalho */
+  /* ocupa o espaço que sobra no cabeçalho, entre o logo e o relógio */
   flex: 1 1 auto;
   min-width: 0;
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin: 0 2.4vw 0 1.2vw;
   display: flex;
   /* respiro dos dois lados: acima separa do cabeçalho; abaixo, da divisória
      dos próximos agendamentos */
@@ -329,13 +333,10 @@ body {
   position: relative;
   background: none;
   border: none;
-  /* sem recuo à direita: o texto da última sala encosta na margem do painel;
-     o vão entre uma sala e a seguinte vem do recuo à esquerda */
-  padding: .6vh 0 .6vh 1vw;
-  /* no máximo duas por tela; com uma sala só, ela ocupa a faixa inteira (a
-     largura final vem do JS, pela quantidade) */
+  padding: .6vh 0;
+  /* a largura é a do próprio texto; o vão até a sala seguinte é a margem */
   flex: 0 0 auto;
-  width: calc(100% / 2);
+  margin-right: 3vw;
   display: flex;
   flex-direction: column;
   /* sala e horário em cima, profissional embaixo */
@@ -346,7 +347,7 @@ body {
 .room__top {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-bottom: .6vh;
 }
@@ -385,7 +386,7 @@ body {
   color: #fff;
   line-height: 1.2;
   letter-spacing: -.01em;
-  text-align: right;
+  text-align: left;
   /* uma linha só: nomes longos deslizam na horizontal (.room__name--marquee) */
   white-space: nowrap;
   overflow: hidden;

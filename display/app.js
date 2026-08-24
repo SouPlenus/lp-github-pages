@@ -16,9 +16,8 @@ const USE_MOCK = CFG.useMock || new URLSearchParams(location.search).get('mock')
 const state = {
   token: null,
   rooms: [],
-  roomStep: 0,      // largura de um tile de sala, com margens (0 = não roda)
-  roomCount: 0,     // quantas salas formam uma volta do rodízio
-  roomIndex: 0,     // tile que está na primeira posição
+  roomLoop: 0,      // largura de uma volta da faixa de salas (0 = não roda)
+  roomX: 0,         // deslocamento atual da faixa, em px
   blocks: [],       // agendamentos já agrupados
   groups: [],       // { top, start, end, sep } de cada bloco de horário
   sepHeight: 40,    // altura da divisória presa no topo da lista
@@ -88,6 +87,16 @@ function slotLabel(start, now, end) {
  */
 function professionalName(item) {
   return (item.professional && item.professional.name) || item.booked_for_name || 'Agendamento';
+}
+
+/**
+ * Nome curto para a faixa do cabeçalho, onde o espaço é apertado: primeiro e
+ * último nome ("Laura Borba Vilanova Castelo" -> "Laura Castelo").
+ */
+function shortName(nome) {
+  const partes = String(nome).trim().split(/\s+/);
+  if (partes.length < 3) return nome;
+  return `${partes[0]} ${partes[partes.length - 1]}`;
 }
 
 function kindOf(item) {
@@ -271,25 +280,20 @@ function renderRooms(now) {
         <span class="room__title">${escapeHtml(room.title)}</span>
       </div>
       <div class="room__name">
-        <span>${atual ? escapeHtml(atual.name) : 'Disponível agora'}</span>
+        <span>${atual ? escapeHtml(shortName(atual.name)) : 'Disponível agora'}</span>
       </div>`;
     wrap.appendChild(card);
-  }
-
-  // a faixa é dividida entre as salas, no máximo duas por tela: uma ocupa
-  // tudo, duas ficam 50/50, três ou mais entram no rodízio horizontal
-  const colunas = Math.min(wrap.children.length, 2) || 1;
-  for (const tile of [].slice.call(wrap.children)) {
-    tile.style.width = `${(100 / colunas).toFixed(4)}%`;
   }
 
   // sem ninguém em sala, a faixa sai da tela
   el('.rooms').hidden = !wrap.children.length;
 
   // cópia da faixa: quando o rodízio chega ao fim da volta, o que está na
-  // tela são as cópias — aí a faixa volta ao começo sem ninguém perceber
+  // tela são as cópias — aí a faixa volta ao começo sem ninguém perceber. A
+  // volta é a largura da série original, medida aqui, já que cada sala tem a
+  // largura do seu próprio texto.
   const cabe = wrap.scrollWidth <= wrap.clientWidth;
-  state.roomCount = cabe ? 0 : wrap.children.length;
+  state.roomLoop = cabe ? 0 : wrap.scrollWidth;
   if (!cabe) {
     const copia = [].slice.call(wrap.children).map((n) => n.cloneNode(true));
     for (const n of copia) {
@@ -298,13 +302,9 @@ function renderRooms(now) {
     }
   }
 
-  // passo do rodízio: distância entre um tile e o seguinte
-  state.roomStep = wrap.children.length > 1
-    ? wrap.children[1].offsetLeft - wrap.children[0].offsetLeft
-    : 0;
-
-  if (state.roomIndex >= state.roomCount) state.roomIndex = 0;
-  placeRooms(wrap, false);
+  // uma volta encolheu (sala liberada): traz o deslocamento para dentro dela
+  state.roomX = state.roomLoop ? state.roomX % state.roomLoop : 0;
+  placeRooms(wrap);
 
   markOverflowingNames(wrap);
 }
@@ -490,35 +490,28 @@ function render() {
 
 /* -------------------------------------------------------- auto-scroll TV */
 
-/** Posiciona a faixa de salas no tile atual, com ou sem animação. */
-function placeRooms(wrap, animar) {
-  const x = state.roomIndex * state.roomStep;
-  wrap.style.transition = animar ? 'transform .7s ease' : 'none';
-  wrap.style.transform = `translateX(${-x}px)`;
+/** Posiciona a faixa de salas no ponto atual do rodízio. */
+function placeRooms(wrap) {
+  wrap.style.transform = `translateX(${-state.roomX}px)`;
 }
 
 /**
- * Rodízio das salas: anda um tile de cada vez e, ao completar a volta, volta
- * ao começo sem animação — como o que está na tela são as cópias dos mesmos
- * tiles, o salto não aparece.
+ * Rodízio das salas: a faixa desliza sem parar, no mesmo ritmo da lista de
+ * baixo, e volta ao começo ao completar uma volta — como o que está na tela
+ * são as cópias dos mesmos tiles, a emenda não aparece.
  */
 function startRoomsScroll() {
   if (!CFG.autoScroll) return;
   const wrap = el('#rooms');
 
   setInterval(() => {
-    if (!state.roomCount || !state.roomStep) return;
+    const volta = state.roomLoop;
+    if (!volta) return;
 
-    state.roomIndex += 1;
-    placeRooms(wrap, true);
-
-    if (state.roomIndex >= state.roomCount) {
-      setTimeout(() => {
-        state.roomIndex = 0;
-        placeRooms(wrap, false);
-      }, 800);
-    }
-  }, 4000);
+    state.roomX += 2.4;
+    if (state.roomX >= volta) state.roomX -= volta;
+    placeRooms(wrap);
+  }, 40);
 }
 
 function startAutoScroll() {
@@ -656,3 +649,15 @@ async function main() {
 }
 
 main();
+
+if (location.search.indexOf('debug=1') > -1) {
+  setInterval(() => {
+    const room = document.querySelector('.room');
+    document.title = JSON.stringify({
+      room: room && room.offsetHeight,
+      logo: document.querySelector('.logo').offsetHeight,
+      header: document.querySelector('.header').offsetHeight,
+      vw: window.innerWidth / 100,
+    });
+  }, 200);
+}

@@ -4,21 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=138">
+  <link rel="stylesheet" href="style.css?v=145">
 </head>
 <body>
   <div class="app">
-    <!-- ícone, relógio e data à esquerda; no que sobra, a faixa de salas -->
+    <!-- ícone à esquerda, relógio e data à direita e, no meio, as salas -->
     <header class="header">
       <img class="logo" src="assets/logo-display-icon.svg" alt="SouPlenus">
-      <div id="clock">--:--</div>
-      <div id="date"></div>
-      <div id="status" class="status" hidden></div>
 
       <!-- quem está em cada sala AGORA -->
       <section class="rooms">
         <div id="rooms"></div>
       </section>
+
+      <div class="header__right">
+        <div id="date"></div>
+        <div id="clock">--:--</div>
+        <div id="status" class="status" hidden></div>
+      </div>
     </header>
 
     <main class="main">
@@ -54,8 +57,8 @@
 
   <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
   <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=138"></script>
-  <script src="mock.js?v=138"></script>
-  <script src="app.js?v=138"></script>
+  <script src="config.js?v=145"></script>
+  <script src="mock.js?v=145"></script>
+  <script src="app.js?v=145"></script>
 </body>
 </html>
