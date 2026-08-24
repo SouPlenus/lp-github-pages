@@ -155,7 +155,21 @@ body {
   color: #9e9e9e;
 }
 
-/* direita: faixa de horário */
+/* direita: quanto falta e a faixa de horário */
+.slot__right {
+  display: flex;
+  align-items: baseline;
+}
+
+.slot__falta {
+  /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+  margin-right: .3em;
+  font-size: clamp(27px, 2.4vw, 48px);
+  font-weight: 600;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+
 .slot__hour {
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
@@ -287,7 +301,8 @@ body {
 .card__room {
   /* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
   margin-right: 1.2vw;
-  font-size: clamp(22px, 1.9vw, 38px);
+  /* mesmo corpo do nome do profissional */
+  font-size: clamp(32px, 3vw, 60px);
   font-weight: 800;
   color: var(--bg);
   background: var(--peach);
@@ -382,7 +397,8 @@ body {
 .room__hours span { margin: 0 .18em; }
 
 .room__title {
-  font-size: clamp(22px, 1.9vw, 38px);
+  /* mesmo corpo do nome do profissional */
+  font-size: clamp(32px, 3vw, 60px);
   font-weight: 800;
   color: var(--bg);
   background: var(--peach);

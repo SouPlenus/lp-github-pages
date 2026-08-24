@@ -54,15 +54,6 @@ function fmtHour(minutes) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
-/** "Acontecendo agora" / "Próximos agendamentos · Faltam 25 minutos" */
-function relLabel(start, now) {
-  const falta = start - now;
-  if (falta <= 0) return 'Acontecendo agora';
-
-  const verbo = falta === 1 || (falta >= 60 && falta < 120) ? 'Falta' : 'Faltam';
-  return `Próximos agendamentos · ${verbo} ${tempoRestante(falta)}`;
-}
-
 /** "1 minuto" / "25 minutos" / "2h30" / "2 horas" */
 function tempoRestante(falta) {
   if (falta === 1) return '1 minuto';
@@ -74,12 +65,28 @@ function tempoRestante(falta) {
   return `${horas} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
-/** Conteúdo de uma divisória: quanto falta à esquerda, faixa de horário à direita. */
+/** "Falta 1h32" / "Faltam 32 minutos" */
+function faltaLabel(falta) {
+  const verbo = falta === 1 || (falta >= 60 && falta < 120) ? 'Falta' : 'Faltam';
+  return `${verbo} ${tempoRestante(falta)}`;
+}
+
+/**
+ * Conteúdo de uma divisória: à esquerda o título; à direita, quanto falta e a
+ * faixa de horário — "Próximos agendamentos ——— Faltam 3h03 · 16:00–17:00".
+ */
 function slotLabel(start, now, end) {
   const faixa = `${fmtHour(start)}<span>–</span>${fmtHour(end || start + 60)}`;
-  return `<span class="slot__rel">${relLabel(start, now)}</span>`
+  const falta = start - now;
+  const titulo = falta <= 0 ? 'Acontecendo agora' : 'Próximos agendamentos';
+  const restante = falta > 0
+    ? `<span class="slot__falta">${faltaLabel(falta)} ·</span>`
+    : '';
+
+  return `<span class="slot__rel">${titulo}</span>`
     + `<span class="slot__line"></span>`
-    + `<span class="slot__hour">${faixa}</span>`;
+    + `<span class="slot__right">${restante}`
+    + `<span class="slot__hour">${faixa}</span></span>`;
 }
 
 /**
