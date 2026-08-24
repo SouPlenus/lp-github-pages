@@ -69,22 +69,24 @@ body {
 }
 
 .header {
-  /* relógio e data à esquerda, logo encostado à direita */
-  display: grid;
-  grid-template-columns: auto auto 1fr;
+  /* logo e "Atualizado às…" à esquerda; data e, na ponta, o relógio */
+  display: flex;
   align-items: center;
-  gap: 1.4vw;
+  justify-content: space-between;
 }
 
-.logo { justify-self: end; height: 5vh; min-height: 34px; width: auto; display: block; }
-
-.header__meta {
-  justify-self: start;
-  text-align: left;
+.header__left,
+.header__right {
+  display: flex;
+  align-items: center;
 }
+
+.logo { height: 5vh; min-height: 34px; width: auto; display: block; }
+
+/* margem no lugar de `gap`: flex gap não existe no Chrome antigo da TV */
+#date { margin-right: 1.4vw; }
 
 #clock {
-  justify-self: start;
   font-size: clamp(40px, 4.4vw, 82px);
   font-weight: 700;
   color: #fff;
@@ -94,7 +96,7 @@ body {
 }
 
 #date {
-  font-size: clamp(22px, 2.1vw, 40px);
+  font-size: clamp(28px, 2.6vw, 50px);
   color: #fff;
   font-weight: 600;
   letter-spacing: .01em;
@@ -106,7 +108,7 @@ body {
   font-size: clamp(14px, 1.2vw, 22px);
   color: var(--muted);
   font-weight: 500;
-  margin-top: .4vh;
+  margin-left: 1.2vw;
 }
 
 .status--error { color: var(--peach); font-weight: 700; }
@@ -149,10 +151,11 @@ body {
   display: flex;
   align-items: center;
   padding: 1.1vh 0;
-  color: #fff;
+  /* hora, linha e rótulo no mesmo cinza */
+  color: #9e9e9e;
 }
 
-/* esquerda: horário */
+/* direita: faixa de horário */
 .slot__hour {
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
@@ -163,15 +166,15 @@ body {
 
 .slot__hour span { margin: 0 .18em; }
 
-/* meio: linha que liga o horário ao rótulo */
+/* meio: linha que liga o rótulo à faixa de horário */
 .slot__line {
   flex: 1;
   height: 1px;
-  background: rgba(255, 255, 255, .5);
+  background: #9e9e9e;
   margin: 0 1vw;
 }
 
-/* direita: "Acontecendo agora" / "Daqui a 40 minutos" — mesmo corpo da data */
+/* esquerda: "Acontecendo agora" / "Daqui a 40 minutos" */
 .slot__rel {
   display: flex;
   align-items: center;
@@ -179,7 +182,6 @@ body {
   font-weight: 600;
   letter-spacing: .01em;
   line-height: 1.1;
-  color: #fff;
   white-space: nowrap;
 }
 
@@ -225,30 +227,29 @@ body {
 }
 
 .card {
-  /* horário na esquerda; nome e sala juntos na direita. A segunda coluna tem
-     mínimo 0 para o nome poder encolher (…) em vez de empurrar a sala ou
+  /* nome e sala na esquerda; horário na direita. A primeira coluna tem
+     mínimo 0 para o nome poder encolher (…) em vez de empurrar o horário ou
      quebrar em duas linhas. */
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 1vw;
   /* sem caixa: cada linha é só o texto e o traço que a separa da seguinte.
      O recuo lateral zerado alinha o horário com o da divisória. */
   padding: 1.7vh 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .18);
+  border-bottom: 1px solid #9e9e9e;
 }
 
 /* a última linha do bloco dispensa o traço: logo abaixo vem a divisória do
    horário seguinte */
 .grid .card:last-child { border-bottom: none; }
 
-/* direita: profissional · sala */
-.card__right {
-  justify-self: end;
+/* esquerda: profissional · sala */
+.card__who {
+  justify-self: start;
   min-width: 0;
   display: flex;
   align-items: baseline;
-  justify-content: flex-end;
 }
 
 .card__dot {
@@ -260,7 +261,7 @@ body {
 
 .card__name {
   min-width: 0;
-  text-align: right;
+  text-align: left;
   /* maior que o horário e a sala: é a informação que se lê de longe */
   font-size: clamp(32px, 3vw, 60px);
   font-weight: 700;
@@ -273,9 +274,9 @@ body {
   text-overflow: ellipsis;
 }
 
-/* esquerda: horário, só o texto */
+/* direita: horário, só o texto */
 .card__hours {
-  justify-self: start;
+  justify-self: end;
   display: flex;
   align-items: center;
   font-size: clamp(28px, 2.4vw, 48px);
@@ -335,10 +336,9 @@ body {
 }
 
 .room {
-  /* outlined: só o contorno, como as linhas da lista */
+  /* sem caixa: os tiles são separados por um traço, como as linhas da lista */
   background: none;
-  border: 1px solid rgba(255, 255, 255, .35);
-  border-radius: 8px;
+  border: none;
   padding: 1.1vh .9vw;
   /* três por tela, alinhados com os cards da lista: largura útil (100vw menos
      o recuo do .app, mais a margem negativa do #rooms) dividida por três, já
@@ -351,6 +351,9 @@ body {
   /* sala encostada no topo, profissional encostado na base */
   justify-content: space-between;
 }
+
+/* uma linha entre um tile e o seguinte */
+.room + .room { border-left: 1px solid #9e9e9e; }
 
 /* margem no lugar de `gap`: mesmo motivo do #rooms */
 .room__top { margin-bottom: .6vh; }

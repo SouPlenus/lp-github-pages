@@ -4,17 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=47">
 </head>
 <body>
   <div class="app">
     <header class="header">
-      <div id="clock">--:--</div>
-      <div class="header__meta">
-        <div id="date"></div>
+      <div class="header__left">
+        <img class="logo" src="assets/logo-display.svg" alt="SouPlenus">
         <div id="status" class="status">Carregando…</div>
       </div>
-      <img class="logo" src="assets/logo-display.svg" alt="SouPlenus">
+      <div class="header__right">
+        <div id="date"></div>
+        <div id="clock">--:--</div>
+      </div>
     </header>
 
     <main class="main">
@@ -56,8 +58,8 @@
 
   <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
   <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=41"></script>
-  <script src="mock.js?v=41"></script>
-  <script src="app.js?v=41"></script>
+  <script src="config.js?v=47"></script>
+  <script src="mock.js?v=47"></script>
+  <script src="app.js?v=47"></script>
 </body>
 </html>

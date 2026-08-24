@@ -54,25 +54,25 @@ function fmtHour(minutes) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
-/** "Acontecendo agora" / "Daqui a 25 minutos" / "Daqui a 2h30" */
+/** "Acontecendo agora" / "Agendamentos daqui a 25 minutos" / "… a 2h30" */
 function relLabel(start, now) {
   const falta = start - now;
   if (falta <= 0) return 'Acontecendo agora';
-  if (falta === 1) return 'Daqui a 1 minuto';
-  if (falta < 60) return `Daqui a ${falta} minutos`;
+  if (falta === 1) return 'Agendamentos daqui a 1 minuto';
+  if (falta < 60) return `Agendamentos daqui a ${falta} minutos`;
 
   const horas = Math.floor(falta / 60);
   const minutos = falta % 60;
-  if (minutos) return `Daqui a ${horas}h${pad(minutos)}`;
-  return `Daqui a ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
+  if (minutos) return `Agendamentos daqui a ${horas}h${pad(minutos)}`;
+  return `Agendamentos daqui a ${horas} ${horas === 1 ? 'hora' : 'horas'}`;
 }
 
-/** Conteúdo de uma divisória: faixa de horário à esquerda, quanto falta à direita. */
+/** Conteúdo de uma divisória: quanto falta à esquerda, faixa de horário à direita. */
 function slotLabel(start, now, end) {
   const faixa = `${fmtHour(start)}<span>–</span>${fmtHour(end || start + 60)}`;
-  return `<span class="slot__hour">${faixa}</span>`
+  return `<span class="slot__rel">${relLabel(start, now)}</span>`
     + `<span class="slot__line"></span>`
-    + `<span class="slot__rel">${relLabel(start, now)}</span>`;
+    + `<span class="slot__hour">${faixa}</span>`;
 }
 
 /**
@@ -371,12 +371,12 @@ function renderList(now) {
     const row = document.createElement('article');
     row.className = `card card--${status} card--${b.kind}`;
     row.innerHTML = `
-      <div class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</div>
-      <div class="card__right">
+      <div class="card__who">
         <span class="card__name">${escapeHtml(b.name)}</span>
         <span class="card__dot">·</span>
         <span class="card__room">${escapeHtml(b.room.title)}</span>
-      </div>`;
+      </div>
+      <div class="card__hours">${fmtHour(b.start)}<span>–</span>${fmtHour(b.end)}</div>`;
     grid.appendChild(row);
   }
 
