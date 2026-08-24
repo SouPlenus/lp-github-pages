@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
   <div class="app">
@@ -36,11 +36,12 @@
 
   <!-- pedido de acesso: aparece só quando o dispositivo ainda não foi configurado -->
   <div class="login" id="login" hidden>
-    <form class="login__box" id="login-form">
+    <div class="login__head">
       <img class="login__logo" src="assets/logo-display.svg" alt="SouPlenus">
       <div class="login__title">Painel da recepção</div>
-      <div class="login__sub">Entre uma vez: o acesso fica salvo neste dispositivo.</div>
+    </div>
 
+    <form class="login__box" id="login-form">
       <label class="login__field">
         <span>E-mail</span>
         <input type="email" id="login-email" autocomplete="username" required>
@@ -58,8 +59,8 @@
 
   <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
   <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=3"></script>
-  <script src="mock.js?v=3"></script>
-  <script src="app.js?v=3"></script>
+  <script src="config.js?v=4"></script>
+  <script src="mock.js?v=4"></script>
+  <script src="app.js?v=4"></script>
 </body>
 </html>

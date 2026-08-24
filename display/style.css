@@ -197,8 +197,8 @@ body {
   font-weight: 700;
   color: #fff;
   letter-spacing: -.03em;
-  /* mesmo respiro do intervalo entre cards (gap do .grid), em cima e embaixo */
-  margin: 1.3vh 0;
+  /* respiro maior que o intervalo entre cards, para separar os blocos de hora */
+  margin: 3vh 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -289,8 +289,7 @@ body {
 /* direita: sala em caixa de destaque */
 .card__room {
   justify-self: end;
-  /* mesmo corpo do horário (.card__hours) */
-  font-size: clamp(13px, 1.15vw, 24px);
+  font-size: clamp(10px, .87vw, 17px);
   font-weight: 800;
   color: var(--green-deep);
   text-transform: uppercase;
@@ -428,10 +427,20 @@ body {
   inset: 0;
   z-index: 10;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6vh;
   background: var(--green);
   padding: 4vh 4vw;
+}
+
+/* logo e título ficam sobre o fundo verde, acima do card */
+.login__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4vh;
 }
 
 .login[hidden] { display: none; }
@@ -447,20 +456,14 @@ body {
   box-shadow: 0 18px 50px rgba(0, 0, 0, .22);
 }
 
-.login__logo { height: 34px; align-self: center; filter: brightness(0) saturate(100%) invert(31%) sepia(20%) saturate(1088%) hue-rotate(122deg) brightness(94%) contrast(88%); }
+.login__logo { height: 40px; }
 
 .login__title {
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--green-deep);
+  color: #fff;
   text-align: center;
-}
-
-.login__sub {
-  font-size: 14px;
-  color: rgba(22, 36, 31, .55);
-  text-align: center;
-  margin-top: -.8vh;
+  letter-spacing: -.01em;
 }
 
 .login__field {
