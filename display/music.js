@@ -72,6 +72,28 @@
     if (s === YT.PlayerState.ENDED || s === -1) player.playVideo();
   }, 30000);
 
+  /* A TV não tem toque nem rolagem fácil no controle: dois botões levam a
+     página do painel ao player e de volta. O de descer some quando já
+     estamos lá embaixo. */
+  var strip = document.getElementById('music-strip');
+  var jump  = document.getElementById('music-jump');
+  var back  = document.getElementById('music-back');
+
+  function rolaPara(y) {
+    if (window.scrollTo) window.scrollTo(0, y);
+    document.documentElement.scrollTop = y;
+    document.body.scrollTop = y;
+  }
+
+  if (jump && strip) jump.addEventListener('click', function () { rolaPara(strip.offsetTop); });
+  if (back) back.addEventListener('click', function () { rolaPara(0); });
+
+  window.addEventListener('scroll', function () {
+    if (!jump) return;
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    jump.style.opacity = y > 40 ? '0' : '1';
+  });
+
   var tag = document.createElement('script');
   tag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);

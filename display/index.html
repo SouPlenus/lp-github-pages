@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=156">
+  <link rel="stylesheet" href="style.css?v=157">
 </head>
 <body>
   <div class="app">
@@ -65,14 +65,18 @@
        sumir com ele — o som continua tocando. -->
   <section class="music" id="music-strip">
     <div class="music__box"><div id="music"></div></div>
+    <button class="music-back" id="music-back" type="button">↑ voltar ao painel</button>
     <p class="music__note">Dê o play aqui uma vez e role a página para cima: o som continua e o player some da tela.</p>
   </section>
 
+  <!-- atalho para descer até o player; some ao rolar -->
+  <button class="music-jump" id="music-jump" type="button" title="Música">♪</button>
+
   <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
   <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=156"></script>
-  <script src="mock.js?v=156"></script>
-  <script src="app.js?v=156"></script>
-  <script src="music.js?v=156"></script>
+  <script src="config.js?v=157"></script>
+  <script src="mock.js?v=157"></script>
+  <script src="app.js?v=157"></script>
+  <script src="music.js?v=157"></script>
 </body>
 </html>
