@@ -35,7 +35,14 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html, body { height: 100%; overflow: hidden; }
+/* A tela do painel ocupa exatamente 100vh; o player do lofi fica logo abaixo.
+   Por isso a página rola na vertical: rolando para baixo você alcança o
+   player, rolando para cima ele some e sobra só o painel. */
+html, body { height: 100%; overflow-x: hidden; overflow-y: auto; }
+
+/* sem barra de rolagem à mostra na TV */
+body::-webkit-scrollbar { width: 0; height: 0; }
+body { scrollbar-width: none; }
 
 body {
   background: var(--bg);
@@ -556,3 +563,35 @@ body {
 }
 
 .login__submit:disabled { opacity: .6; cursor: default; }
+
+/* ------------------------------------------------------------ lofi ao vivo */
+
+/* Faixa logo abaixo do painel: só aparece quando a página é rolada para baixo. */
+.music {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 4vh 2.6vw;
+}
+
+.music__box {
+  width: min(880px, 90vw);
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
+}
+
+.music__box iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+.music__note {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: center;
+  max-width: 60ch;
+}
