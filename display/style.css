@@ -66,8 +66,42 @@ body {
   flex: 1 1 auto;
   /* sem isto o conteúdo da lista impede o flex de encolher */
   min-height: 0;
+  /* peça da casa à esquerda (embaixo do logo) e a lista ocupando o resto */
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+/* ------------------------------------------------------------ peça fixa */
+
+/* Coluna à esquerda, alinhada com o logo do cabeçalho. A arte é vertical
+   (9:16): manda a altura que sobra na coluna — menos o respiro de baixo — e a
+   largura sai da proporção, até o teto de 22vw para a lista não ser espremida
+   em telas largas. Dimensionar pela largura fazia a arte estourar a altura em
+   telas mais baixas que 16:9, e o respiro de baixo era o primeiro a ser
+   cortado. */
+.ads {
+  /* respiro à direita e embaixo: um valor só, para a arte ficar com a mesma
+     folga dos dois lados */
+  --ads-gap: 1.2vw;
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  margin-right: var(--ads-gap);
+}
+
+.ads__img {
+  display: block;
+  /* os dois limites são tetos, nunca medidas fixas: assim o navegador escolhe
+     o menor dos dois e a proporção 9:16 se mantém. Com `height` fixo a arte
+     esticava quando o teto de largura entrava. */
+  width: auto;
+  height: auto;
+  max-width: 22vw;
+  /* mesmo respiro do lado direito, agora embaixo */
+  max-height: calc(100% - var(--ads-gap));
+  border-radius: 2.4vh;
 }
 
 .header {
@@ -142,6 +176,8 @@ body {
 
 .agenda {
   flex: 1 1 auto;
+  /* ao lado da peça fixa, sem isto a lista não encolhe */
+  min-width: 0;
   min-height: 0;
   display: block;
 }
