@@ -75,42 +75,7 @@ body {
   flex: 1 1 auto;
   /* sem isto o conteúdo da lista impede o flex de encolher */
   min-height: 0;
-  /* peça da casa à esquerda (embaixo do logo) e a lista ocupando o resto */
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-}
-
-/* ------------------------------------------------------------ peça fixa */
-
-/* Coluna à esquerda, alinhada com o logo do cabeçalho. A arte é vertical
-   (9:16): manda a altura que sobra na coluna — menos o respiro de baixo — e a
-   largura sai da proporção, até o teto de 22vw para a lista não ser espremida
-   em telas largas. Dimensionar pela largura fazia a arte estourar a altura em
-   telas mais baixas que 16:9, e o respiro de baixo era o primeiro a ser
-   cortado. */
-.ads {
-  /* respiro à direita e embaixo: um valor só, para a arte ficar com a mesma
-     folga dos dois lados */
-  --ads-gap: 1.2vw;
-  flex: 0 0 auto;
-  min-height: 0;
-  max-height: 100%;
-  overflow: hidden;
-  margin-right: var(--ads-gap);
-}
-
-.ads__img {
   display: block;
-  /* os dois limites são tetos, nunca medidas fixas: assim o navegador escolhe
-     o menor dos dois e a proporção 9:16 se mantém. Com `height` fixo a arte
-     esticava quando o teto de largura entrava. */
-  width: auto;
-  height: auto;
-  max-width: 22vw;
-  /* mesmo respiro do lado direito, agora embaixo */
-  max-height: calc(100% - var(--ads-gap));
-  border-radius: 2.4vh;
 }
 
 .header {
@@ -184,9 +149,7 @@ body {
 /* ------------------------------------------------- agenda (sem moldura) */
 
 .agenda {
-  flex: 1 1 auto;
-  /* ao lado da peça fixa, sem isto a lista não encolhe */
-  min-width: 0;
+  height: 100%;
   min-height: 0;
   display: block;
 }
@@ -565,74 +528,3 @@ body {
 }
 
 .login__submit:disabled { opacity: .6; cursor: default; }
-
-/* ---------------------------------------------------------- música de fundo */
-
-/* Faixa logo abaixo do painel: só aparece quando a página é rolada para baixo.
-   Sem `aspect-ratio` nem `gap`: o Chrome da TV é antigo e ignora os dois. */
-.music {
-  min-height: 100vh;
-  background: var(--bg);
-  text-align: center;
-  padding: 6vh 2.6vw;
-}
-
-.music__box {
-  position: relative;
-  width: 90vw;
-  max-width: 880px;
-  /* proporção 16:9 pela altura do padding — funciona em qualquer navegador */
-  height: 0;
-  padding-bottom: 50.625%;
-  max-height: 495px;
-  margin: 0 auto 18px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #111;
-}
-
-.music__box iframe,
-.music__box > div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  display: block;
-}
-
-.music__note {
-  font-size: clamp(14px, 1.2vw, 22px);
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.music-back {
-  font-family: inherit;
-  font-size: clamp(14px, 1.2vw, 22px);
-  font-weight: 600;
-  color: #fff;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 10px 20px;
-  margin-bottom: 14px;
-  cursor: pointer;
-}
-
-/* seta na tela para descer até o player sem depender do controle remoto */
-.music-jump {
-  position: fixed;
-  right: 14px;
-  bottom: 10px;
-  z-index: 40;
-  font-family: inherit;
-  font-size: 20px;
-  line-height: 1;
-  color: rgba(255, 255, 255, .38);
-  background: none;
-  border: 0;
-  padding: 10px 14px;
-  cursor: pointer;
-}

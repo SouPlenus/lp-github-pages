@@ -1,82 +1,81 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Agendamentos de hoje · SouPlenus</title>
-  <link rel="stylesheet" href="style.css?v=157">
-</head>
-<body>
-  <div class="app">
-    <!-- ícone à esquerda, relógio e data à direita e, no meio, as salas -->
-    <header class="header">
-      <img class="logo" src="assets/logo-display-icon.svg" alt="SouPlenus">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Display · SouPlenus</title>
+    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css?v=157" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- ícone à esquerda, relógio e data à direita e, no meio, as salas -->
+      <header class="header">
+        <img class="logo" src="assets/logo-display-icon.svg" alt="SouPlenus" />
 
-      <!-- quem está em cada sala AGORA -->
-      <section class="rooms">
-        <div id="rooms"></div>
-      </section>
+        <!-- quem está em cada sala AGORA -->
+        <section class="rooms">
+          <div id="rooms"></div>
+        </section>
 
-      <div class="header__right">
-        <div id="date"></div>
-        <div id="clock">--:--</div>
-        <div id="status" class="status" hidden></div>
-      </div>
-    </header>
+        <div class="header__right">
+          <div id="date"></div>
+          <div id="clock">--:--</div>
+          <div id="status" class="status" hidden></div>
+        </div>
+      </header>
 
-    <main class="main">
-      <!-- peça fixa da casa, embaixo do logo e ao lado da lista -->
-      <aside class="ads">
-        <img class="ads__img" src="ads/talkplenus.png" alt="Talk Plenus">
-      </aside>
-
-      <!-- lista rolando: só o que ainda vai começar -->
-      <section class="agenda">
-        <div class="agenda__scroll" id="list"></div>
-      </section>
-    </main>
-  </div>
-
-  <!-- pedido de acesso: aparece só quando o dispositivo ainda não foi configurado -->
-  <div class="login" id="login" hidden>
-    <div class="login__head">
-      <img class="login__logo" src="assets/logo-display.svg" alt="SouPlenus">
-      <div class="login__title">Painel da recepção</div>
+      <main class="main">
+        <!-- lista rolando: só o que ainda vai começar -->
+        <section class="agenda">
+          <div class="agenda__scroll" id="list"></div>
+        </section>
+      </main>
     </div>
 
-    <form class="login__box" id="login-form">
-      <label class="login__field">
-        <span>E-mail</span>
-        <input type="email" id="login-email" autocomplete="username" required>
-      </label>
+    <!-- pedido de acesso: aparece só quando o dispositivo ainda não foi configurado -->
+    <div class="login" id="login" hidden>
+      <div class="login__head">
+        <img
+          class="login__logo"
+          src="assets/logo-display.svg"
+          alt="SouPlenus"
+        />
+        <div class="login__title">Painel da recepção</div>
+      </div>
 
-      <label class="login__field">
-        <span>Senha</span>
-        <input type="password" id="login-password" autocomplete="current-password" required>
-      </label>
+      <form class="login__box" id="login-form">
+        <label class="login__field">
+          <span>E-mail</span>
+          <input
+            type="email"
+            id="login-email"
+            autocomplete="username"
+            required
+          />
+        </label>
 
-      <div class="login__error" id="login-error" hidden></div>
-      <button class="login__submit" type="submit" id="login-submit">Entrar</button>
-    </form>
-  </div>
+        <label class="login__field">
+          <span>Senha</span>
+          <input
+            type="password"
+            id="login-password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
 
-  <!-- Música de fundo: fica logo ABAIXO da tela do painel.
-       Role para baixo para usar o player (play/volume) e para cima para
-       sumir com ele — o som continua tocando. -->
-  <section class="music" id="music-strip">
-    <div class="music__box"><div id="music"></div></div>
-    <button class="music-back" id="music-back" type="button">↑ voltar ao painel</button>
-    <p class="music__note">Dê o play aqui uma vez e role a página para cima: o som continua e o player some da tela.</p>
-  </section>
+        <div class="login__error" id="login-error" hidden></div>
+        <button class="login__submit" type="submit" id="login-submit">
+          Entrar
+        </button>
+      </form>
+    </div>
 
-  <!-- atalho para descer até o player; some ao rolar -->
-  <button class="music-jump" id="music-jump" type="button" title="Música">♪</button>
-
-  <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
-  <script src="config.local.js" onerror="void 0"></script>
-  <script src="config.js?v=157"></script>
-  <script src="mock.js?v=157"></script>
-  <script src="app.js?v=157"></script>
-  <script src="music.js?v=157"></script>
-</body>
+    <!-- credenciais locais, fora do Git; ausente em produção (404 esperado) -->
+    <script src="config.local.js" onerror="void 0"></script>
+    <script src="config.js?v=157"></script>
+    <script src="mock.js?v=157"></script>
+    <script src="app.js?v=157"></script>
+  </body>
 </html>
